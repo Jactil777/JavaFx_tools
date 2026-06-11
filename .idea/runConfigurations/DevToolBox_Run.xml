@@ -1,0 +1,24 @@
+<component name="ProjectRunConfigurationManager">
+  <!--
+    在 IDEA 中通过 Maven exec:java 启动（纯 classpath，无需 module-path）
+    Run 菜单 → DevToolBox Run 即可
+  -->
+  <configuration default="false" name="DevToolBox Run" type="MavenRunConfiguration" factoryName="Maven">
+    <MavenSettings>
+      <option name="myGeneralSettings" />
+      <option name="myRunnerSettings" />
+      <option name="myRunnerParameters">
+        <MavenRunnerParameters>
+          <option name="workingDirPath" value="$PROJECT_DIR$" />
+          <option name="goals">
+            <list>
+              <option value="exec:java" />
+            </list>
+          </option>
+          <option name="pomFileName" value="pom.xml" />
+        </MavenRunnerParameters>
+      </option>
+    </MavenSettings>
+    <method v="2" />
+  </configuration>
+</component>

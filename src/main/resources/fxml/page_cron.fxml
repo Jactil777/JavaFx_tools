@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.devtool.controller.CronPageController"
+      styleClass="page-container"
+      spacing="0"
+      style="-fx-padding: 16;">
+
+    <!-- ── 标题 ── -->
+    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 14 0;">
+        <Label text="&#9200;" style="-fx-font-size:20px;"/>
+        <Label text="Cron 表达式生成器" styleClass="title-label"/>
+    </HBox>
+
+    <!-- ── 主体（左右布局） ── -->
+    <HBox spacing="14" VBox.vgrow="ALWAYS">
+
+        <!-- ══ 左栏：配置 + 表达式 ══ -->
+        <VBox spacing="12" prefWidth="420" minWidth="380"
+              style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:16;">
+
+            <!-- 表头 -->
+            <HBox>
+                <Label text="可视化配置" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+            </HBox>
+
+            <!-- 6 个字段表格 -->
+            <VBox spacing="6">
+                <!-- 行标题 -->
+                <HBox spacing="0">
+                    <Label text="字段" prefWidth="60" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+                    <Label text="值（* 表示任意）" prefWidth="180" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+                    <Label text="范围说明" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+                </HBox>
+
+                <!-- 秒 -->
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="秒" prefWidth="50" style="-fx-text-fill:#ccc; -fx-font-size:13px; -fx-font-weight:bold;"/>
+                    <TextField fx:id="secField" prefWidth="160" style="-fx-font-family:'Consolas',monospace; -fx-font-size:13px;"/>
+                    <Label fx:id="secDesc" text="0-59" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+                </HBox>
+                <!-- 分 -->
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="分" prefWidth="50" style="-fx-text-fill:#ccc; -fx-font-size:13px; -fx-font-weight:bold;"/>
+                    <TextField fx:id="minField" prefWidth="160" style="-fx-font-family:'Consolas',monospace; -fx-font-size:13px;"/>
+                    <Label fx:id="minDesc" text="0-59" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+                </HBox>
+                <!-- 时 -->
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="时" prefWidth="50" style="-fx-text-fill:#ccc; -fx-font-size:13px; -fx-font-weight:bold;"/>
+                    <TextField fx:id="hourField" prefWidth="160" style="-fx-font-family:'Consolas',monospace; -fx-font-size:13px;"/>
+                    <Label fx:id="hourDesc" text="0-23" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+                </HBox>
+                <!-- 日 -->
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="日" prefWidth="50" style="-fx-text-fill:#ccc; -fx-font-size:13px; -fx-font-weight:bold;"/>
+                    <TextField fx:id="dayField" prefWidth="160" style="-fx-font-family:'Consolas',monospace; -fx-font-size:13px;"/>
+                    <Label fx:id="dayDesc" text="1-31 或 ?" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+                </HBox>
+                <!-- 月 -->
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="月" prefWidth="50" style="-fx-text-fill:#ccc; -fx-font-size:13px; -fx-font-weight:bold;"/>
+                    <TextField fx:id="monField" prefWidth="160" style="-fx-font-family:'Consolas',monospace; -fx-font-size:13px;"/>
+                    <Label fx:id="monDesc" text="1-12" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+                </HBox>
+                <!-- 周 -->
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="周" prefWidth="50" style="-fx-text-fill:#ccc; -fx-font-size:13px; -fx-font-weight:bold;"/>
+                    <TextField fx:id="weekField" prefWidth="160" style="-fx-font-family:'Consolas',monospace; -fx-font-size:13px;"/>
+                    <Label fx:id="weekDesc" text="0-6（日=0，六=6）" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+                </HBox>
+            </VBox>
+
+            <!-- 语法速查 -->
+            <VBox spacing="3" style="-fx-background-color:#2b2b2b; -fx-border-radius:4; -fx-background-radius:4; -fx-padding:8;">
+                <Label text="语法速查" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                <Label text="*  任意值    /  步进（0/5 = 每5）    -  范围（1-5）    ,  枚举（1,3,5）    ?  不指定（日/周互斥）"
+                       style="-fx-text-fill:#666; -fx-font-size:11px; -fx-font-family:'Consolas',monospace;" wrapText="true"/>
+            </VBox>
+
+            <Separator style="-fx-opacity:0.4;"/>
+
+            <!-- 表达式 + 按钮 -->
+            <VBox spacing="8">
+                <Label text="Cron 表达式" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <TextField fx:id="exprField" HBox.hgrow="ALWAYS"
+                               style="-fx-font-family:'Consolas','Courier New',monospace; -fx-font-size:15px; -fx-font-weight:bold; -fx-text-fill:#4a9eff;"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onCopy"/>
+                    <Button text="重置" styleClass="json-action-btn" onAction="#onReset"/>
+                </HBox>
+                <Label fx:id="validateLabel" text="" style="-fx-font-size:12px;"/>
+            </VBox>
+
+            <!-- 状态 -->
+            <Label fx:id="statusLabel" text="就绪" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+        </VBox>
+
+        <!-- ══ 右栏：模板 + 触发时间 ══ -->
+        <VBox spacing="12" HBox.hgrow="ALWAYS">
+
+            <!-- 常用模板 -->
+            <VBox spacing="8"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:14;">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="&#128196; 常用模板" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="应用选中" styleClass="json-action-btn" onAction="#onApplyTemplate"/>
+                </HBox>
+                <Label text="双击模板直接应用" style="-fx-text-fill:#555; -fx-font-size:11px;"/>
+                <ListView fx:id="templateList" prefHeight="200"
+                          style="-fx-background-color:#1e1e1e; -fx-control-inner-background:#1e1e1e; -fx-border-color:#444; -fx-font-size:12px;"/>
+            </VBox>
+
+            <!-- 下次触发时间 -->
+            <VBox spacing="8" VBox.vgrow="ALWAYS"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:14;">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="&#9201; 下次 10 次触发时间" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="刷新" styleClass="json-action-btn" onAction="#onRefresh"/>
+                </HBox>
+                <ListView fx:id="triggerList" VBox.vgrow="ALWAYS"
+                          style="-fx-background-color:#1e1e1e; -fx-control-inner-background:#1e1e1e; -fx-border-color:#444; -fx-font-family:'Consolas',monospace; -fx-font-size:13px;"/>
+            </VBox>
+
+        </VBox>
+    </HBox>
+
+</VBox>
+

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.devtool.controller.MainController"
+            styleClass="root-pane">
+
+    <!-- 顶部标题栏 -->
+    <top>
+        <VBox styleClass="top-bar">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <padding><Insets top="12" right="20" bottom="12" left="20"/></padding>
+                <Label text="⚒" styleClass="app-icon-label"/>
+                <Label text="DevToolBox  开发者工具箱" styleClass="app-title-label"/>
+            </HBox>
+            <Separator/>
+        </VBox>
+    </top>
+
+    <!-- 左侧导航栏 -->
+    <left>
+        <VBox styleClass="nav-panel">
+            <Label text="工具列表" styleClass="nav-title">
+                <VBox.margin><Insets top="15" right="0" bottom="8" left="15"/></VBox.margin>
+            </Label>
+            <ListView fx:id="navListView" styleClass="nav-list" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </left>
+
+    <!-- 右侧内容区域 -->
+    <center>
+        <BorderPane fx:id="contentPane" styleClass="content-pane"/>
+    </center>
+
+    <!-- 底部状态栏 -->
+    <bottom>
+        <VBox>
+            <Separator/>
+            <HBox styleClass="status-bar" alignment="CENTER_LEFT">
+                <padding><Insets top="5" right="15" bottom="5" left="15"/></padding>
+                <Label fx:id="statusLabel" text="就绪" styleClass="status-label"/>
+            </HBox>
+        </VBox>
+    </bottom>
+
+</BorderPane>
+

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.devtool.controller.JsonPageController"
+      styleClass="page-container"
+      spacing="0"
+      style="-fx-padding: 16;">
+
+    <!-- ── 页面标题 ── -->
+    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 12 0;">
+        <Label text="&#128203;" style="-fx-font-size: 20px;"/>
+        <Label text="JSON 工具箱" styleClass="title-label"/>
+        <Label fx:id="validLabel" style="-fx-font-size: 12px; -fx-padding: 0 0 0 12;"/>
+    </HBox>
+
+    <!-- ── Tab 功能切换 ── -->
+    <HBox spacing="4" style="-fx-padding: 0 0 10 0;" alignment="CENTER_LEFT">
+        <Button fx:id="tabFormat"   text="格式化"    styleClass="json-tab, json-tab-active" onAction="#onTabFormat"/>
+        <Button fx:id="tabCompress" text="压缩"      styleClass="json-tab"                  onAction="#onTabCompress"/>
+        <Button fx:id="tabEscape"   text="转义"      styleClass="json-tab"                  onAction="#onTabEscape"/>
+        <Button fx:id="tabUnescape" text="反转义"    styleClass="json-tab"                  onAction="#onTabUnescape"/>
+        <Button fx:id="tabEntity"   text="生成实体类" styleClass="json-tab"                 onAction="#onTabEntity"/>
+        <Button fx:id="tabDiff"     text="JSON 对比" styleClass="json-tab"                  onAction="#onTabDiff"/>
+    </HBox>
+
+    <!-- ══ 普通模式面板 ══ -->
+    <VBox fx:id="normalPane" VBox.vgrow="ALWAYS" spacing="4">
+        <!-- 普通模式搜索栏（Ctrl+F 触发，默认隐藏） -->
+        <HBox fx:id="normalSearchBar" spacing="6" alignment="CENTER_LEFT"
+              managed="false" visible="false"
+              style="-fx-padding: 2 4; -fx-background-color: #3c3f41; -fx-border-color: #555; -fx-border-width: 0 0 1 0;">
+            <Label text="搜索:" style="-fx-text-fill:#aaa; -fx-font-size:12px;"/>
+            <TextField fx:id="normalSearchField" promptText="输入关键字..." prefWidth="200" style="-fx-font-size:12px;"/>
+            <Button text="上一个" styleClass="json-action-btn" onAction="#onNormalSearchPrev"/>
+            <Button text="下一个" styleClass="json-action-btn" onAction="#onNormalSearchNext"/>
+            <Label fx:id="normalSearchHint" style="-fx-text-fill:#888; -fx-font-size:11px;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="✕" styleClass="json-action-btn" onAction="#onNormalSearchClose" style="-fx-padding:2 8;"/>
+        </HBox>
+
+        <SplitPane dividerPositions="0.45" VBox.vgrow="ALWAYS"
+                   style="-fx-background-color: transparent; -fx-border-color: transparent;">
+            <!-- 左：输入区 -->
+            <VBox styleClass="json-panel" spacing="6" minWidth="200">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="输入" styleClass="json-panel-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="清空" styleClass="json-action-btn" onAction="#onClearInput"/>
+                    <Button text="粘贴" styleClass="json-action-btn" onAction="#onPasteInput"/>
+                    <Button text="示例" styleClass="json-action-btn" onAction="#onSampleInput"/>
+                </HBox>
+                <TextArea fx:id="inputArea" styleClass="json-text-area"
+                          promptText="在此粘贴 JSON..." VBox.vgrow="ALWAYS"/>
+            </VBox>
+
+            <!-- 右：输出区 -->
+            <VBox styleClass="json-panel" spacing="6" minWidth="200">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="输出" styleClass="json-panel-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="btnExpandAll"      text="展开全部"   styleClass="json-action-btn" onAction="#onExpandAll"       managed="false" visible="false"/>
+                    <Button fx:id="btnCollapseAll"    text="折叠全部"   styleClass="json-action-btn" onAction="#onCollapseAll"     managed="false" visible="false"/>
+                    <Button fx:id="btnCompressOutput" text="压缩为一行" styleClass="json-action-btn" onAction="#onCompressOutput"  managed="false" visible="false"/>
+                    <Button fx:id="btnToXml"          text="转 XML"    styleClass="json-action-btn" onAction="#onToXml"            managed="false" visible="false"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onCopyOutput"/>
+                    <Button text="清空" styleClass="json-action-btn" onAction="#onClearOutput"/>
+                </HBox>
+                <HBox fx:id="entityOptionsBar" spacing="10" alignment="CENTER_LEFT" managed="false" visible="false">
+                    <Label text="语言：" style="-fx-text-fill:#aaaaaa; -fx-font-size:12px;"/>
+                    <ComboBox fx:id="languageCombo" prefWidth="100" style="-fx-font-size:12px;"/>
+                    <Label text="类名：" style="-fx-text-fill:#aaaaaa; -fx-font-size:12px;"/>
+                    <TextField fx:id="classNameField" promptText="ClassName" prefWidth="130" style="-fx-font-size:12px;"/>
+                    <CheckBox fx:id="lombokCheck" text="Lombok" style="-fx-text-fill:#bbbbbb; -fx-font-size:12px;"/>
+                </HBox>
+                <TreeView fx:id="jsonTreeView" styleClass="json-tree-view" VBox.vgrow="ALWAYS" managed="false" visible="false"/>
+                <TextArea fx:id="outputArea" styleClass="json-text-area"
+                          promptText="结果将在此显示..." editable="false" VBox.vgrow="ALWAYS"/>
+            </VBox>
+        </SplitPane>
+    </VBox>
+
+    <!-- ══ 对比模式面板（默认隐藏） ══ -->
+    <VBox fx:id="diffPane" VBox.vgrow="ALWAYS" spacing="4" managed="false" visible="false">
+
+        <!-- 对比模式搜索栏（Ctrl+F 触发，默认隐藏） -->
+        <HBox fx:id="diffSearchBar" spacing="6" alignment="CENTER_LEFT"
+              managed="false" visible="false"
+              style="-fx-padding: 2 4; -fx-background-color: #3c3f41; -fx-border-color: #555; -fx-border-width: 0 0 1 0;">
+            <Label text="搜索:" style="-fx-text-fill:#aaa; -fx-font-size:12px;"/>
+            <TextField fx:id="diffSearchField" promptText="输入关键字..." prefWidth="200" style="-fx-font-size:12px;"/>
+            <Button text="上一个" styleClass="json-action-btn" onAction="#onDiffSearchPrev"/>
+            <Button text="下一个" styleClass="json-action-btn" onAction="#onDiffSearchNext"/>
+            <Label fx:id="diffSearchHint" style="-fx-text-fill:#888; -fx-font-size:11px;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="✕" styleClass="json-action-btn" onAction="#onDiffSearchClose" style="-fx-padding:2 8;"/>
+        </HBox>
+
+        <!-- 上半：A/B 高亮行视图并排 -->
+        <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS"
+                   style="-fx-background-color: transparent; -fx-border-color: transparent;">
+
+            <!-- JSON A 高亮视图 -->
+            <VBox styleClass="json-panel" spacing="6" minWidth="200">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="JSON A（原始）" styleClass="json-panel-title" style="-fx-text-fill: #61afef;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="清空" styleClass="json-action-btn" onAction="#onClearDiffA"/>
+                    <Button text="粘贴" styleClass="json-action-btn" onAction="#onPasteDiffA"/>
+                    <Button text="示例" styleClass="json-action-btn" onAction="#onSampleDiffA"/>
+                </HBox>
+                <!-- 输入状态：TextArea（默认显示） -->
+                <TextArea fx:id="diffInputA" styleClass="json-text-area"
+                          promptText="粘贴原始 JSON (A)..." VBox.vgrow="ALWAYS"/>
+                <!-- 对比结果状态：带高亮的行ListView（对比后显示，默认隐藏） -->
+                <ListView fx:id="diffHighlightA" styleClass="json-diff-highlight" VBox.vgrow="ALWAYS"
+                          managed="false" visible="false"/>
+            </VBox>
+
+            <!-- JSON B 高亮视图 -->
+            <VBox styleClass="json-panel" spacing="6" minWidth="200">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="JSON B（对比）" styleClass="json-panel-title" style="-fx-text-fill: #98c379;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="清空" styleClass="json-action-btn" onAction="#onClearDiffB"/>
+                    <Button text="粘贴" styleClass="json-action-btn" onAction="#onPasteDiffB"/>
+                    <Button text="示例" styleClass="json-action-btn" onAction="#onSampleDiffB"/>
+                </HBox>
+                <TextArea fx:id="diffInputB" styleClass="json-text-area"
+                          promptText="粘贴对比 JSON (B)..." VBox.vgrow="ALWAYS"/>
+                <ListView fx:id="diffHighlightB" styleClass="json-diff-highlight" VBox.vgrow="ALWAYS"
+                          managed="false" visible="false"/>
+            </VBox>
+        </SplitPane>
+
+        <!-- 下半：差异结果摘要列表 -->
+        <VBox styleClass="json-panel" spacing="6" prefHeight="220" minHeight="140">
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label text="差异摘要" styleClass="json-panel-title"/>
+                <Label fx:id="diffSummaryLabel" style="-fx-font-size:12px; -fx-text-fill:#888888; -fx-padding: 0 0 0 8;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="A独有" style="-fx-font-size:11px; -fx-text-fill:#e06c75; -fx-background-color:#3a2020; -fx-padding:2 6; -fx-background-radius:3;"/>
+                <Label text="B独有" style="-fx-font-size:11px; -fx-text-fill:#98c379; -fx-background-color:#1e3020; -fx-padding:2 6; -fx-background-radius:3;"/>
+                <Label text="值不同" style="-fx-font-size:11px; -fx-text-fill:#e5c07b; -fx-background-color:#2f2a18; -fx-padding:2 6; -fx-background-radius:3;"/>
+                <Button text="复制摘要" styleClass="json-action-btn" onAction="#onCopyDiffResult"/>
+            </HBox>
+            <ListView fx:id="diffResultList" styleClass="json-diff-list" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </VBox>
+
+    <!-- ── 底部操作栏 ── -->
+    <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10 0 0 0;">
+        <Button fx:id="runButton" text="执行"
+                styleClass="button-primary, json-run-btn"
+                defaultButton="true" onAction="#onRun"/>
+        <Label fx:id="statusLabel" style="-fx-font-size: 12px; -fx-text-fill: #888888;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Ctrl+Enter 执行  |  Ctrl+F 搜索"
+               style="-fx-font-size: 11px; -fx-text-fill: #555555;"/>
+    </HBox>
+
+</VBox>

@@ -1,0 +1,565 @@
+/* ===================================================
+   DevToolBox - 全局深色主题样式
+   =================================================== */
+
+/* ---- 全局根容器 ---- */
+.root {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #cccccc;
+    -fx-font-family: "Microsoft YaHei", "SimHei", "Arial", sans-serif;
+    -fx-font-size: 13px;
+}
+
+.root-pane {
+    -fx-background-color: #2b2b2b;
+}
+
+/* ---- 顶部标题栏 ---- */
+.top-bar {
+    -fx-background-color: #3c3f41;
+}
+
+.app-icon-label {
+    -fx-font-size: 20px;
+}
+
+.app-title-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e0e0e0;
+}
+
+/* ---- 左侧导航面板 ---- */
+.nav-panel {
+    -fx-background-color: #3c3f41;
+    -fx-border-color: #1e1e1e;
+    -fx-border-width: 0 1 0 0;
+    -fx-min-width: 160px;
+    -fx-pref-width: 170px;
+}
+
+.nav-title {
+    -fx-text-fill: #888888;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.nav-list {
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.nav-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #bbbbbb;
+    -fx-padding: 11 15;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+.nav-list .list-cell:selected {
+    -fx-background-color: #4a6fa5;
+    -fx-text-fill: #ffffff;
+}
+
+.nav-list .list-cell:hover:!selected {
+    -fx-background-color: #44474a;
+    -fx-text-fill: #dddddd;
+}
+
+/* ---- 右侧内容区 ---- */
+.content-pane {
+    -fx-background-color: #2b2b2b;
+}
+
+/* ---- 页面容器 ---- */
+.page-container {
+    -fx-background-color: #2b2b2b;
+    -fx-padding: 40;
+}
+
+/* ---- 文字样式 ---- */
+.title-label {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e0e0e0;
+}
+
+.desc-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #999999;
+}
+
+.version-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #666666;
+}
+
+.feature-title-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #888888;
+    -fx-font-weight: bold;
+}
+
+.feature-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #777777;
+}
+
+/* ---- 底部状态栏 ---- */
+.status-bar {
+    -fx-background-color: #3c3f41;
+    -fx-min-height: 26px;
+}
+
+.status-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #888888;
+}
+
+/* ---- 通用输入框 ---- */
+.text-field {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #cccccc;
+    -fx-border-color: #555555;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-padding: 5 8;
+}
+
+.text-field:focused {
+    -fx-border-color: #4a6fa5;
+}
+
+/* ---- 多行文本区 ---- */
+.text-area {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #cccccc;
+    -fx-border-color: #555555;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+.text-area .content {
+    -fx-background-color: #3c3f41;
+}
+
+.text-area:focused {
+    -fx-border-color: #4a6fa5;
+}
+
+/* ---- 按钮 ---- */
+.button {
+    -fx-background-color: #505355;
+    -fx-text-fill: #e0e0e0;
+    -fx-border-color: #666666;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-padding: 6 14;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #606365;
+    -fx-border-color: #777777;
+}
+
+.button:pressed {
+    -fx-background-color: #404244;
+}
+
+/* 主色调按钮 */
+.button-primary {
+    -fx-background-color: #4a6fa5;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #4a6fa5;
+}
+
+.button-primary:hover {
+    -fx-background-color: #5a7fb5;
+}
+
+/* ---- 分隔线 ---- */
+.separator .line {
+    -fx-border-color: #444444;
+    -fx-border-width: 1 0 0 0;
+}
+
+/* ---- 标签 ---- */
+.label {
+    -fx-text-fill: #cccccc;
+}
+
+/* ---- 下拉框 ---- */
+.combo-box {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #cccccc;
+    -fx-border-color: #555555;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: #cccccc;
+    -fx-background-color: #3c3f41;
+}
+
+/* ---- 滚动条 ---- */
+.scroll-bar {
+    -fx-background-color: #2b2b2b;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #555555;
+    -fx-background-radius: 4;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #666666;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: #3c3f41;
+}
+
+/* =====================================================
+   JSON 工具箱专用样式
+   ===================================================== */
+
+/* Tab 切换按钮 */
+.json-tab {
+    -fx-background-color: #383b3e;
+    -fx-text-fill: #aaaaaa;
+    -fx-border-color: #555555;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 5 14;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+
+.json-tab:hover {
+    -fx-background-color: #44474a;
+    -fx-text-fill: #dddddd;
+}
+
+.json-tab-active {
+    -fx-background-color: #4a6fa5;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #4a6fa5;
+}
+
+.json-tab-active:hover {
+    -fx-background-color: #5a7fb5;
+}
+
+/* 左右面板 */
+.json-panel {
+    -fx-background-color: #313335;
+    -fx-border-color: #444444;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 10;
+}
+
+.json-panel-title {
+    -fx-font-size: 12px;
+    -fx-text-fill: #888888;
+    -fx-font-weight: bold;
+}
+
+/* 代码文本域 */
+.json-text-area {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #d4d4d4;
+    -fx-border-color: #444444;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
+    -fx-font-size: 13px;
+}
+
+.json-text-area .content {
+    -fx-background-color: #2b2b2b;
+}
+
+.json-text-area:focused {
+    -fx-border-color: #4a6fa5;
+}
+
+/* 操作小按钮 */
+.json-action-btn {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #bbbbbb;
+    -fx-border-color: #555555;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-padding: 3 10;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+
+.json-action-btn:hover {
+    -fx-background-color: #484b4e;
+    -fx-text-fill: #eeeeee;
+}
+
+/* 执行按钮 */
+.json-run-btn {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 24;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+/* SplitPane 分割线 */
+.split-pane > .split-pane-divider {
+    -fx-background-color: #444444;
+    -fx-padding: 0 2;
+}
+
+.split-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+/* =====================================================
+   JSON 树形视图样式
+   ===================================================== */
+
+.json-tree-view {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #444444;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
+    -fx-font-size: 13px;
+}
+
+.json-tree-view .tree-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #d4d4d4;
+    -fx-padding: 2 4;
+}
+
+.json-tree-view .tree-cell:selected {
+    -fx-background-color: #214283;
+    -fx-text-fill: #ffffff;
+}
+
+.json-tree-view .tree-cell:hover:!selected {
+    -fx-background-color: #353535;
+}
+
+/* 展开/折叠箭头 */
+.json-tree-view .tree-disclosure-node .arrow {
+    -fx-background-color: #777777;
+}
+
+.json-tree-view .tree-disclosure-node:hover .arrow {
+    -fx-background-color: #aaaaaa;
+}
+
+/* =====================================================
+   JSON 对比差异列表样式
+   ===================================================== */
+
+.json-diff-list {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #444444;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+.json-diff-list .list-cell {
+    -fx-padding: 3 8;
+    -fx-font-family: "Consolas", "Courier New", monospace;
+    -fx-font-size: 12px;
+    -fx-background-color: transparent;
+    -fx-text-fill: #888888;
+}
+
+/* 选中行保持高亮背景但加深 */
+.json-diff-list .list-cell:selected {
+    -fx-background-color: derive(-fx-control-inner-background, -10%);
+    -fx-opacity: 0.9;
+}
+
+/* =====================================================
+   JSON 对比 A/B 高亮视图
+   ===================================================== */
+.json-diff-highlight {
+    -fx-background-color: #1e1e1e;
+    -fx-border-color: #444444;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+.json-diff-highlight .list-cell {
+    -fx-padding: 1 6;
+    -fx-font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
+    -fx-font-size: 12px;
+    -fx-background-color: transparent;
+    -fx-text-fill: #d4d4d4;
+}
+
+.json-diff-highlight .list-cell:selected {
+    -fx-background-color: rgba(70, 100, 160, 0.5);
+}
+
+/* ---- CheckBox ---- */
+.check-box {
+    -fx-text-fill: #cccccc;
+}
+
+/* 未选中：空白深色方框 */
+.check-box .box {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #666666;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-min-width: 14px;
+    -fx-min-height: 14px;
+    -fx-max-width: 14px;
+    -fx-max-height: 14px;
+}
+
+/* 未选中时 mark 完全隐藏 */
+.check-box .mark {
+    -fx-background-color: transparent;
+    -fx-shape: null;
+}
+
+/* 悬停：边框高亮 */
+.check-box:hover .box {
+    -fx-border-color: #4a6fa5;
+    -fx-background-color: #353535;
+}
+
+/* 选中：蓝色背景 + 白色勾 */
+.check-box:selected .box {
+    -fx-background-color: #4a6fa5;
+    -fx-border-color: #4a6fa5;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: #ffffff;
+    -fx-shape: "M 0,4 L 3,7 L 8,1";
+    -fx-scale-x: 0.8;
+    -fx-scale-y: 0.8;
+}
+
+/* 禁用状态 */
+.check-box:disabled {
+    -fx-opacity: 0.45;
+}
+
+/* ---- Separator ---- */
+.separator .line {
+    -fx-border-color: #444444;
+}
+
+/* =====================================================
+   ListView 深色主题
+   ===================================================== */
+
+.list-view {
+    -fx-background-color: #1e1e1e;
+    -fx-control-inner-background: #1e1e1e;
+    -fx-border-color: #444444;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+.list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #d4d4d4;
+    -fx-padding: 4 8;
+}
+
+.list-view .list-cell:selected {
+    -fx-background-color: #214283;
+    -fx-text-fill: #ffffff;
+}
+
+.list-view .list-cell:hover:!selected {
+    -fx-background-color: #2a2d2f;
+}
+
+/* 奇偶行交替色 */
+.list-view .list-cell:even {
+    -fx-background-color: #222426;
+}
+
+.list-view .list-cell:odd {
+    -fx-background-color: #1e1e1e;
+}
+
+.list-view .list-cell:even:selected,
+.list-view .list-cell:odd:selected {
+    -fx-background-color: #214283;
+}
+
+/* =====================================================
+   Spinner 深色主题
+   ===================================================== */
+
+.spinner {
+    -fx-background-color: #3c3f41;
+    -fx-border-color: #555555;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+.spinner .text-field {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #cccccc;
+    -fx-border-color: transparent;
+}
+
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-background-color: #4a4d50;
+    -fx-border-color: #555555;
+}
+
+.spinner .increment-arrow-button:hover,
+.spinner .decrement-arrow-button:hover {
+    -fx-background-color: #5a5d60;
+}
+
+.spinner .increment-arrow,
+.spinner .decrement-arrow {
+    -fx-background-color: #cccccc;
+}
+
+/* =====================================================
+   Slider 深色主题
+   ===================================================== */
+
+.slider .track {
+    -fx-background-color: #444444;
+    -fx-border-color: #555555;
+}
+
+.slider .thumb {
+    -fx-background-color: #4a6fa5;
+    -fx-border-color: #5a7fb5;
+}
+
+.slider .thumb:hover {
+    -fx-background-color: #5a7fb5;
+}
+
+.slider .thumb:pressed {
+    -fx-background-color: #3a5f95;
+}
+
+.slider .axis {
+    -fx-tick-label-fill: #666666;
+    -fx-font-size: 10px;
+}

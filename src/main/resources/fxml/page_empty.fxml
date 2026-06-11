@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.devtool.controller.EmptyPageController"
+      alignment="CENTER" spacing="16"
+      styleClass="page-container">
+
+    <Label text="⚒" style="-fx-font-size: 52px;"/>
+    <Label fx:id="titleLabel" text="欢迎使用 DevToolBox 开发者工具箱" styleClass="title-label"/>
+    <Separator prefWidth="300"/>
+    <Label fx:id="descLabel" text="请在左侧选择需要使用的工具" styleClass="desc-label"/>
+    <Label fx:id="versionLabel" text="版本：v1.0.0" styleClass="version-label"/>
+
+    <VBox alignment="CENTER" spacing="8" style="-fx-padding: 30 0 0 0;">
+        <Label text="即将支持的工具：" styleClass="feature-title-label"/>
+        <Label text="🔐 加密解密    |    ⏱ 时间戳工具    |    🗄 SQL 格式化    |    📝 文本批量处理" styleClass="feature-label"/>
+    </VBox>
+
+</VBox>
+

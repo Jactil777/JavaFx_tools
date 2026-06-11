@@ -1,0 +1,62 @@
+DevToolBox 开发备忘录
+======================
+
+最后更新：2026-06-11
+
+## 已完成功能清单
+✅ 项目基础框架搭建
+✅ JSON 工具箱（完整）
+✅ 打包功能（一键打包）
+✅ UTF-8 编码支持
+✅ 深色主题
+
+## 下一步开发计划
+⏰ Phase 2：加密解密、时间戳、SQL、文本工具（预计 6 天）
+
+## 技术要点
+- JavaFX 17 + Java 17
+- Maven 构建
+- jpackage 打包（需要 WiX Toolset）
+- logback 日志
+- Jackson JSON 处理
+
+## 重要命令
+# 运行项目
+mvn exec:java
+
+# 打包项目
+双击 一键打包.bat
+或：.\build-exe.ps1
+
+# 清理项目
+mvn clean
+
+## 遇到的问题及解决
+1. 日志乱码 → logback.xml 使用 GBK 编码（控制台）
+2. 打包脚本乱码 → PowerShell 脚本使用 UTF-8 BOM 编码
+3. 双击 .ps1 无反应 → 创建 .bat 文件调用 PowerShell
+4. WiX 找不到 → 脚本自动检测 WiX 并添加到 PATH
+
+## 待办事项
+□ 开发加密解密工具
+□ 开发时间戳工具
+□ 开发 SQL 工具
+□ 开发文本批量处理工具
+□ 添加单元测试
+□ 优化启动速度
+
+## 参考链接
+- JavaFX 文档：https://openjfx.io/
+- JDK 17 下载：https://adoptium.net/
+- WiX 下载：https://github.com/wixtoolset/wix3/releases
+
+## 项目文件说明
+- 一键打包.bat：双击打包（推荐）
+- build-exe.ps1：打包核心脚本
+- README.md：完整项目文档
+- PC桌面工具箱开发落地计划.md：详细开发计划
+
+======================
+个人笔记：
+（在此添加您的个人开发笔记）
+

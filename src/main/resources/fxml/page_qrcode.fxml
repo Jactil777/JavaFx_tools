@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.devtool.controller.QrCodePageController"
+      styleClass="page-container"
+      spacing="0"
+      style="-fx-padding: 16;">
+
+    <!-- ── 标题 ── -->
+    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 14 0;">
+        <Label text="&#128396;" style="-fx-font-size:20px;"/>
+        <Label text="二维码生成器" styleClass="title-label"/>
+    </HBox>
+
+    <!-- ── 主体 ── -->
+    <HBox spacing="16" VBox.vgrow="ALWAYS">
+
+        <!-- ══ 左：输入配置区 ══ -->
+        <VBox spacing="12" prefWidth="320" minWidth="300"
+              style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:16;">
+
+            <!-- 类型选择 -->
+            <VBox spacing="6">
+                <Label text="内容类型" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                <HBox spacing="16">
+                    <RadioButton fx:id="rbText"  text="&#128196; 文本" selected="true" style="-fx-text-fill:#ccc;">
+                        <toggleGroup><ToggleGroup fx:id="typeGroup"/></toggleGroup>
+                    </RadioButton>
+                    <RadioButton fx:id="rbUrl"   text="&#127760; 网址" toggleGroup="$typeGroup" style="-fx-text-fill:#ccc;"/>
+                    <RadioButton fx:id="rbEmail" text="&#9993; 邮箱"  toggleGroup="$typeGroup" style="-fx-text-fill:#ccc;"/>
+                </HBox>
+                <Label fx:id="hintLabel" text="" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+            </VBox>
+
+            <Separator style="-fx-opacity:0.4;"/>
+
+            <!-- 输入区 -->
+            <VBox spacing="6" VBox.vgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="6">
+                    <Label text="输入内容" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="粘贴" styleClass="json-action-btn" onAction="#onPaste"/>
+                    <Button text="清空" styleClass="json-action-btn" onAction="#onClear"/>
+                </HBox>
+                <TextArea fx:id="inputArea" prefRowCount="6" wrapText="true"
+                          promptText="输入内容后自动生成二维码..."
+                          style="-fx-font-size:13px;"/>
+            </VBox>
+
+            <Separator style="-fx-opacity:0.4;"/>
+
+            <!-- 尺寸 -->
+            <VBox spacing="6">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="图片尺寸" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                    <Label fx:id="sizeLabel" text="300 px" style="-fx-text-fill:#4a9eff; -fx-font-size:12px; -fx-font-weight:bold;"/>
+                </HBox>
+                <Slider fx:id="sizeSlider" min="100" max="600" value="300" blockIncrement="50"
+                        showTickLabels="true" showTickMarks="true" majorTickUnit="100" minorTickCount="1"
+                        style="-fx-accent:#4a6fa5;"/>
+            </VBox>
+
+            <Separator style="-fx-opacity:0.4;"/>
+
+            <!-- 操作按钮 -->
+            <VBox spacing="8">
+                <Button text="&#128190;  保存图片" fx:id="btnSave" onAction="#onSave"
+                        maxWidth="Infinity" styleClass="button-primary" disable="true"
+                        style="-fx-font-size:13px; -fx-font-weight:bold; -fx-padding:8 0; -fx-border-radius:4; -fx-background-radius:4; -fx-cursor:hand;"/>
+                <Button text="&#128203;  复制图片到剪贴板" onAction="#onCopyImage"
+                        maxWidth="Infinity"
+                        style="-fx-font-size:13px; -fx-padding:8 0; -fx-border-radius:4; -fx-background-radius:4; -fx-cursor:hand;"/>
+            </VBox>
+
+        </VBox>
+
+        <!-- ══ 右：二维码预览区 ══ -->
+        <VBox HBox.hgrow="ALWAYS" alignment="CENTER" spacing="12"
+              style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:20;">
+
+            <Label text="二维码预览" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+
+            <!-- 二维码图片展示区 -->
+            <StackPane style="-fx-background-color:#f5f5f5; -fx-border-color:#666; -fx-border-radius:4; -fx-background-radius:4;"
+                       prefWidth="320" prefHeight="320" minWidth="200" minHeight="200">
+                <ImageView fx:id="qrImageView" preserveRatio="true"
+                           fitWidth="300" fitHeight="300"
+                           smooth="false"/>
+                <Label text="&#128396;  等待生成..." style="-fx-text-fill:#999; -fx-font-size:14px;"/>
+            </StackPane>
+
+            <!-- 状态栏 -->
+            <Label fx:id="statusLabel" text="输入内容后自动生成二维码"
+                   style="-fx-text-fill:#666; -fx-font-size:12px;"/>
+
+        </VBox>
+    </HBox>
+
+</VBox>
+
