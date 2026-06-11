@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.devtool.controller.TimePageController"
+      styleClass="page-container"
+      spacing="0"
+      style="-fx-padding: 16;">
+
+    <!-- ── 页面标题 ── -->
+    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 14 0;">
+        <Label text="&#9200;" style="-fx-font-size: 20px;"/>
+        <Label text="时间戳 / 时区工具" styleClass="title-label"/>
+    </HBox>
+
+    <!-- ── Tab 切换栏 ── -->
+    <HBox spacing="6" style="-fx-padding: 0 0 12 0;">
+        <Button fx:id="tabConvert"   text="🔄 时间戳转换"  onAction="#onTabConvert"   styleClass="json-tab,json-tab-active"/>
+        <Button fx:id="tabZone"      text="🌏 多时区时钟"  onAction="#onTabZone"      styleClass="json-tab"/>
+        <Button fx:id="tabDiff"      text="📅 日期差计算"  onAction="#onTabDiff"      styleClass="json-tab"/>
+        <Button fx:id="tabMilestone" text="📌 常用时间戳"  onAction="#onTabMilestone" styleClass="json-tab"/>
+    </HBox>
+
+    <!-- ══════════════════════════════════════════════
+         时间戳转换面板
+    ══════════════════════════════════════════════ -->
+    <VBox fx:id="convertPane" spacing="10" VBox.vgrow="ALWAYS">
+
+        <!-- 实时时钟卡片 -->
+        <HBox spacing="24" alignment="CENTER_LEFT"
+              style="-fx-background-color:#1a2a1a; -fx-border-color:#3a5a3a; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12 18;">
+            <VBox spacing="2">
+                <Label text="当前时间戳（秒）" style="-fx-text-fill:#888; -fx-font-size:11px;"/>
+                <Label fx:id="liveSecLabel" text="—"
+                       style="-fx-text-fill:#98c379; -fx-font-family:'Consolas',monospace; -fx-font-size:18px; -fx-font-weight:bold;"/>
+            </VBox>
+            <VBox spacing="2">
+                <Label text="当前时间戳（毫秒）" style="-fx-text-fill:#888; -fx-font-size:11px;"/>
+                <Label fx:id="liveMillisLabel" text="—"
+                       style="-fx-text-fill:#e5c07b; -fx-font-family:'Consolas',monospace; -fx-font-size:18px; -fx-font-weight:bold;"/>
+            </VBox>
+            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                <Label text="北京时间" style="-fx-text-fill:#888; -fx-font-size:11px;"/>
+                <Label fx:id="liveDateLabel" text="—"
+                       style="-fx-text-fill:#61afef; -fx-font-family:'Consolas',monospace; -fx-font-size:18px; -fx-font-weight:bold;"/>
+            </VBox>
+        </HBox>
+
+        <!-- 时间戳 → 日期 -->
+        <HBox spacing="12">
+            <VBox spacing="8" HBox.hgrow="ALWAYS"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:14;">
+                <Label text="🔢 时间戳 → 日期" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <TextField fx:id="tsInputField" promptText="输入时间戳（秒或毫秒，自动识别）..."
+                               HBox.hgrow="ALWAYS" style="-fx-font-family:'Consolas',monospace; -fx-font-size:13px;"/>
+                    <Button text="填入现在" styleClass="json-action-btn" onAction="#onFillNowTs"/>
+                </HBox>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="时区:" style="-fx-text-fill:#aaa; -fx-font-size:12px;"/>
+                    <ComboBox fx:id="tsZoneCombo" prefWidth="220" style="-fx-font-size:12px;"/>
+                    <Button text="转换" styleClass="button-primary" onAction="#onTsConvert"
+                            style="-fx-font-size:13px; -fx-padding:5 18; -fx-border-radius:3; -fx-background-radius:3;"/>
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="结果:" style="-fx-text-fill:#888; -fx-font-size:12px;"/>
+                    <Label fx:id="tsResultLabel" text="—"
+                           style="-fx-text-fill:#61afef; -fx-font-family:'Consolas',monospace; -fx-font-size:14px; -fx-font-weight:bold;" HBox.hgrow="ALWAYS"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onCopyTsResult"/>
+                </HBox>
+                <HBox spacing="10">
+                    <Label text="相对时间:" style="-fx-text-fill:#888; -fx-font-size:12px;"/>
+                    <Label fx:id="tsRelativeLabel" text="—" style="-fx-text-fill:#c678dd; -fx-font-size:12px;"/>
+                </HBox>
+            </VBox>
+
+            <!-- 日期 → 时间戳 -->
+            <VBox spacing="8" HBox.hgrow="ALWAYS"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:14;">
+                <Label text="📅 日期 → 时间戳" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <TextField fx:id="dateInputField" promptText="例：2026-06-11 18:30:00"
+                               HBox.hgrow="ALWAYS" style="-fx-font-family:'Consolas',monospace; -fx-font-size:13px;"/>
+                    <Button text="填入现在" styleClass="json-action-btn" onAction="#onFillNowDate"/>
+                </HBox>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="时区:" style="-fx-text-fill:#aaa; -fx-font-size:12px;"/>
+                    <ComboBox fx:id="dateZoneCombo" prefWidth="220" style="-fx-font-size:12px;"/>
+                    <Button text="转换" styleClass="button-primary" onAction="#onDateConvert"
+                            style="-fx-font-size:13px; -fx-padding:5 18; -fx-border-radius:3; -fx-background-radius:3;"/>
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="秒时间戳:" style="-fx-text-fill:#888; -fx-font-size:12px;"/>
+                    <Label fx:id="dateSecLabel" text="—"
+                           style="-fx-text-fill:#98c379; -fx-font-family:'Consolas',monospace; -fx-font-size:14px; -fx-font-weight:bold;" HBox.hgrow="ALWAYS"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onCopyDateSec"/>
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="毫秒时间戳:" style="-fx-text-fill:#888; -fx-font-size:12px;"/>
+                    <Label fx:id="dateMillisLabel" text="—"
+                           style="-fx-text-fill:#e5c07b; -fx-font-family:'Consolas',monospace; -fx-font-size:14px; -fx-font-weight:bold;" HBox.hgrow="ALWAYS"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onCopyDateMillis"/>
+                </HBox>
+                <HBox spacing="10">
+                    <Label text="相对时间:" style="-fx-text-fill:#888; -fx-font-size:12px;"/>
+                    <Label fx:id="dateRelativeLabel" text="—" style="-fx-text-fill:#c678dd; -fx-font-size:12px;"/>
+                </HBox>
+            </VBox>
+        </HBox>
+
+        <HBox style="-fx-padding:4 0 0 0;">
+            <Label fx:id="convertStatusLabel" text="就绪" style="-fx-text-fill:#666; -fx-font-size:12px;"/>
+        </HBox>
+    </VBox>
+
+    <!-- ══════════════════════════════════════════════
+         多时区面板
+    ══════════════════════════════════════════════ -->
+    <VBox fx:id="zonePane" spacing="10" VBox.vgrow="ALWAYS" visible="false" managed="false">
+
+        <!-- 时区列表 -->
+        <VBox spacing="6" VBox.vgrow="ALWAYS"
+              style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12;">
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label text="全球常用时区当前时间" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="🔄 刷新" styleClass="json-action-btn" onAction="#onRefreshZones"/>
+            </HBox>
+            <ListView fx:id="zoneListView" VBox.vgrow="ALWAYS"
+                      style="-fx-background-color:#1e1e1e; -fx-control-inner-background:#1e1e1e;
+                             -fx-font-family:'Consolas','Courier New',monospace; -fx-font-size:13px;
+                             -fx-border-color:#444; -fx-border-radius:3; -fx-background-radius:3;"/>
+        </VBox>
+
+        <!-- 时区转换 -->
+        <VBox spacing="8"
+              style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:14;">
+            <Label text="🔄 时区转换" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <TextField fx:id="zoneConvertInput" promptText="输入时间（如 2026-06-11 18:00:00）..."
+                           HBox.hgrow="ALWAYS" style="-fx-font-family:'Consolas',monospace; -fx-font-size:13px;"/>
+                <Button text="填入现在" styleClass="json-action-btn" onAction="#onFillZoneNow"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="从:" style="-fx-text-fill:#ccc; -fx-font-size:13px;"/>
+                <ComboBox fx:id="fromZoneCombo" prefWidth="200" style="-fx-font-size:12px;"/>
+                <Button text="⇆ 互换" styleClass="json-action-btn" onAction="#onSwapZones"/>
+                <Label text="到:" style="-fx-text-fill:#ccc; -fx-font-size:13px;"/>
+                <ComboBox fx:id="toZoneCombo" prefWidth="200" style="-fx-font-size:12px;"/>
+                <Button text="转换" styleClass="button-primary" onAction="#onZoneConvert"
+                        style="-fx-font-size:13px; -fx-padding:5 18; -fx-border-radius:3; -fx-background-radius:3;"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="结果:" style="-fx-text-fill:#888; -fx-font-size:12px;"/>
+                <Label fx:id="zoneConvertResult" text="—"
+                       style="-fx-text-fill:#61afef; -fx-font-family:'Consolas',monospace; -fx-font-size:14px; -fx-font-weight:bold;" HBox.hgrow="ALWAYS"/>
+                <Button text="复制" styleClass="json-action-btn" onAction="#onCopyZoneResult"/>
+            </HBox>
+        </VBox>
+
+        <HBox>
+            <Label fx:id="zoneStatusLabel" text="就绪" style="-fx-text-fill:#666; -fx-font-size:12px;"/>
+        </HBox>
+    </VBox>
+
+    <!-- ══════════════════════════════════════════════
+         日期差计算面板
+    ══════════════════════════════════════════════ -->
+    <VBox fx:id="diffPane" spacing="12" visible="false" managed="false">
+
+        <!-- 输入 -->
+        <HBox spacing="12" alignment="CENTER_LEFT"
+              style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:14;">
+            <Label text="开始日期:" style="-fx-text-fill:#ccc; -fx-font-size:13px;"/>
+            <TextField fx:id="diffDateA" promptText="如：2024-01-01  或  2024-01-01 09:00:00"
+                       prefWidth="240" style="-fx-font-family:'Consolas',monospace; -fx-font-size:13px;"/>
+            <Label text="结束日期:" style="-fx-text-fill:#ccc; -fx-font-size:13px;"/>
+            <TextField fx:id="diffDateB" promptText="如：2026-06-11  或  2026-06-11 18:30:00"
+                       prefWidth="240" style="-fx-font-family:'Consolas',monospace; -fx-font-size:13px;"/>
+            <Button text="填今天" styleClass="json-action-btn" onAction="#onFillDiffToday"/>
+            <Button text="⇄ 互换" styleClass="json-action-btn" onAction="#onSwapDiffDates"/>
+            <Button text="计算" styleClass="button-primary" onAction="#onCalcDiff"
+                    style="-fx-font-size:13px; -fx-padding:6 20; -fx-border-radius:3; -fx-background-radius:3;"/>
+        </HBox>
+
+        <!-- 结果卡片 -->
+        <HBox spacing="12">
+            <VBox spacing="6" HBox.hgrow="ALWAYS" alignment="CENTER"
+                  style="-fx-background-color:#1a2a1a; -fx-border-color:#3a5a3a; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:20;">
+                <Label text="自然日" style="-fx-text-fill:#888; -fx-font-size:12px;"/>
+                <Label fx:id="diffTotalDays" text="—"
+                       style="-fx-text-fill:#98c379; -fx-font-size:28px; -fx-font-weight:bold;"/>
+            </VBox>
+            <VBox spacing="6" HBox.hgrow="ALWAYS" alignment="CENTER"
+                  style="-fx-background-color:#1a2030; -fx-border-color:#3a4a6a; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:20;">
+                <Label text="工作日（排除周末）" style="-fx-text-fill:#888; -fx-font-size:12px;"/>
+                <Label fx:id="diffWorkDays" text="—"
+                       style="-fx-text-fill:#61afef; -fx-font-size:28px; -fx-font-weight:bold;"/>
+            </VBox>
+        </HBox>
+
+        <!-- 精确分解 -->
+        <VBox spacing="6"
+              style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:14;">
+            <Label text="精确分解" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+            <Label fx:id="diffDetail" text="—"
+                   style="-fx-text-fill:#e5c07b; -fx-font-family:'Consolas',monospace; -fx-font-size:14px;"/>
+        </VBox>
+
+        <HBox>
+            <Label fx:id="diffStatusLabel" text="支持格式：yyyy-MM-dd 或 yyyy-MM-dd HH:mm:ss"
+                   style="-fx-text-fill:#666; -fx-font-size:12px;"/>
+        </HBox>
+    </VBox>
+
+    <!-- ══════════════════════════════════════════════
+         里程碑面板
+    ══════════════════════════════════════════════ -->
+    <VBox fx:id="milestonePane" spacing="10" VBox.vgrow="ALWAYS" visible="false" managed="false">
+        <VBox spacing="6" VBox.vgrow="ALWAYS"
+              style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12;">
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label text="📌 常用时间戳参考值（点击复制时间戳）"
+                       style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="🔄 刷新" styleClass="json-action-btn" onAction="#onRefreshMilestones"/>
+                <Button text="复制选中时间戳" styleClass="json-action-btn" onAction="#onCopyMilestone"/>
+            </HBox>
+            <ListView fx:id="milestoneListView" VBox.vgrow="ALWAYS"
+                      style="-fx-background-color:#1e1e1e; -fx-control-inner-background:#1e1e1e;
+                             -fx-font-family:'Consolas','Courier New',monospace; -fx-font-size:13px;
+                             -fx-border-color:#444; -fx-border-radius:3; -fx-background-radius:3;"/>
+        </VBox>
+    </VBox>
+
+</VBox>
+

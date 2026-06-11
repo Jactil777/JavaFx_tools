@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.devtool.controller.EncryptPageController"
+      styleClass="page-container"
+      spacing="0"
+      style="-fx-padding: 16;">
+
+    <!-- ── 页面标题 ── -->
+    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 14 0;">
+        <Label text="&#128272;" style="-fx-font-size: 20px;"/>
+        <Label text="加密 / 解密工具" styleClass="title-label"/>
+    </HBox>
+
+    <!-- ── Tab 切换栏 ── -->
+    <HBox spacing="6" style="-fx-padding: 0 0 12 0;">
+        <Button fx:id="tabHash"   text="🔒 Hash摘要"   onAction="#onTabHash"   styleClass="json-tab,json-tab-active"/>
+        <Button fx:id="tabAes"    text="🔑 AES加密"    onAction="#onTabAes"    styleClass="json-tab"/>
+        <Button fx:id="tabBase64" text="📦 Base64"     onAction="#onTabBase64" styleClass="json-tab"/>
+        <Button fx:id="tabUrl"    text="🔗 URL编解码"  onAction="#onTabUrl"    styleClass="json-tab"/>
+    </HBox>
+
+    <!-- ══════════════════════════════════════════════
+         Hash 面板
+    ══════════════════════════════════════════════ -->
+    <VBox fx:id="hashPane" spacing="10" VBox.vgrow="ALWAYS">
+        <HBox spacing="12" VBox.vgrow="ALWAYS">
+
+            <!-- 左：输入区 -->
+            <VBox spacing="8" prefWidth="320" minWidth="280"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:14;">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="输入内容" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="粘贴" styleClass="json-action-btn" onAction="#onPasteHash"/>
+                    <Button text="清空" styleClass="json-action-btn" onAction="#onClearHash"/>
+                </HBox>
+                <TextArea fx:id="hashInputArea" VBox.vgrow="ALWAYS" promptText="在此输入任意文本，下方实时显示各类 Hash 值..."
+                          styleClass="json-text-area" style="-fx-pref-height:160;"/>
+
+                <Separator style="-fx-opacity:0.4;"/>
+                <Label text="HMAC 密钥（可选）" style="-fx-text-fill:#888; -fx-font-size:11px;"/>
+                <TextField fx:id="hmacKeyField" promptText="输入 HMAC 密钥..." style="-fx-font-size:12px;"/>
+
+                <Separator style="-fx-opacity:0.4;"/>
+                <Label text="输出格式" style="-fx-text-fill:#888; -fx-font-size:11px;"/>
+                <HBox spacing="12">
+                    <CheckBox fx:id="chkUppercase" text="大写" style="-fx-text-fill:#ccc; -fx-font-size:12px;"/>
+                    <CheckBox fx:id="chkGrouped"   text="分组显示（每8字符加空格）" style="-fx-text-fill:#ccc; -fx-font-size:12px;"/>
+                </HBox>
+            </VBox>
+
+            <!-- 右：结果区 -->
+            <VBox spacing="0" HBox.hgrow="ALWAYS"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:14;">
+                <Label text="计算结果（输入内容后自动计算）"
+                       style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold; -fx-padding:0 0 10 0;"/>
+
+                <!-- MD5 -->
+                <HBox alignment="CENTER_LEFT" spacing="6" style="-fx-padding:4 0;">
+                    <Label text="MD5" style="-fx-text-fill:#e5c07b; -fx-font-size:12px; -fx-min-width:110;"/>
+                    <Label fx:id="resultMd5" text="—"
+                           style="-fx-text-fill:#98c379; -fx-font-family:'Consolas',monospace; -fx-font-size:12px;" HBox.hgrow="ALWAYS"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onCopyMd5"/>
+                </HBox>
+                <Separator style="-fx-opacity:0.2;"/>
+
+                <!-- SHA-1 -->
+                <HBox alignment="CENTER_LEFT" spacing="6" style="-fx-padding:4 0;">
+                    <Label text="SHA-1" style="-fx-text-fill:#e5c07b; -fx-font-size:12px; -fx-min-width:110;"/>
+                    <Label fx:id="resultSha1" text="—"
+                           style="-fx-text-fill:#98c379; -fx-font-family:'Consolas',monospace; -fx-font-size:12px;" HBox.hgrow="ALWAYS"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onCopySha1"/>
+                </HBox>
+                <Separator style="-fx-opacity:0.2;"/>
+
+                <!-- SHA-256 -->
+                <HBox alignment="CENTER_LEFT" spacing="6" style="-fx-padding:4 0;">
+                    <Label text="SHA-256" style="-fx-text-fill:#e5c07b; -fx-font-size:12px; -fx-min-width:110;"/>
+                    <Label fx:id="resultSha256" text="—"
+                           style="-fx-text-fill:#98c379; -fx-font-family:'Consolas',monospace; -fx-font-size:12px;" HBox.hgrow="ALWAYS"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onCopySha256"/>
+                </HBox>
+                <Separator style="-fx-opacity:0.2;"/>
+
+                <!-- SHA-512 -->
+                <HBox alignment="CENTER_LEFT" spacing="6" style="-fx-padding:4 0;">
+                    <Label text="SHA-512" style="-fx-text-fill:#e5c07b; -fx-font-size:12px; -fx-min-width:110;"/>
+                    <Label fx:id="resultSha512" text="—"
+                           style="-fx-text-fill:#98c379; -fx-font-family:'Consolas',monospace; -fx-font-size:11px;" HBox.hgrow="ALWAYS" wrapText="true"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onCopySha512"/>
+                </HBox>
+
+                <Separator style="-fx-opacity:0.4; -fx-padding:4 0;"/>
+                <Label text="HMAC（需填写密钥）"
+                       style="-fx-text-fill:#888; -fx-font-size:11px; -fx-padding:6 0 4 0;"/>
+
+                <!-- HMAC-SHA1 -->
+                <HBox alignment="CENTER_LEFT" spacing="6" style="-fx-padding:4 0;">
+                    <Label text="HMAC-SHA1" style="-fx-text-fill:#c678dd; -fx-font-size:12px; -fx-min-width:110;"/>
+                    <Label fx:id="resultHmacSha1" text="— 请输入 HMAC 密钥 —"
+                           style="-fx-text-fill:#888; -fx-font-family:'Consolas',monospace; -fx-font-size:12px;" HBox.hgrow="ALWAYS"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onCopyHmacSha1"/>
+                </HBox>
+                <Separator style="-fx-opacity:0.2;"/>
+
+                <!-- HMAC-SHA256 -->
+                <HBox alignment="CENTER_LEFT" spacing="6" style="-fx-padding:4 0;">
+                    <Label text="HMAC-SHA256" style="-fx-text-fill:#c678dd; -fx-font-size:12px; -fx-min-width:110;"/>
+                    <Label fx:id="resultHmacSha256" text="— 请输入 HMAC 密钥 —"
+                           style="-fx-text-fill:#888; -fx-font-family:'Consolas',monospace; -fx-font-size:12px;" HBox.hgrow="ALWAYS"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onCopyHmacSha256"/>
+                </HBox>
+                <Separator style="-fx-opacity:0.2;"/>
+
+                <!-- HMAC-SHA512 -->
+                <HBox alignment="CENTER_LEFT" spacing="6" style="-fx-padding:4 0;">
+                    <Label text="HMAC-SHA512" style="-fx-text-fill:#c678dd; -fx-font-size:12px; -fx-min-width:110;"/>
+                    <Label fx:id="resultHmacSha512" text="— 请输入 HMAC 密钥 —"
+                           style="-fx-text-fill:#888; -fx-font-family:'Consolas',monospace; -fx-font-size:11px;" HBox.hgrow="ALWAYS" wrapText="true"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onCopyHmacSha512"/>
+                </HBox>
+
+                <Region VBox.vgrow="ALWAYS"/>
+                <Label fx:id="hashStatusLabel" text="输入内容后自动计算"
+                       style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+            </VBox>
+        </HBox>
+    </VBox>
+
+    <!-- ══════════════════════════════════════════════
+         AES 面板
+    ══════════════════════════════════════════════ -->
+    <VBox fx:id="aesPane" spacing="10" VBox.vgrow="ALWAYS" visible="false" managed="false">
+
+        <!-- 配置行 -->
+        <HBox spacing="12" alignment="CENTER_LEFT"
+              style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12 14;">
+            <Label text="模式:" style="-fx-text-fill:#ccc; -fx-font-size:13px;"/>
+            <ComboBox fx:id="aesModeCombo" prefWidth="160" style="-fx-font-size:12px;"/>
+            <Label text="密钥:" style="-fx-text-fill:#ccc; -fx-font-size:13px;"/>
+            <TextField fx:id="aesKeyField" prefWidth="200" promptText="密钥（16位=AES-128, 32位=AES-256）"
+                       style="-fx-font-size:12px; -fx-font-family:'Consolas',monospace;" HBox.hgrow="ALWAYS"/>
+        </HBox>
+
+        <!-- IV 行（CBC 模式才显示） -->
+        <HBox fx:id="aesIvRow" spacing="12" alignment="CENTER_LEFT"
+              style="-fx-background-color:#2a2a2a; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:10 14;">
+            <Label text="IV 向量:" style="-fx-text-fill:#ccc; -fx-font-size:13px;"/>
+            <TextField fx:id="aesIvField" prefWidth="280" promptText="CBC模式IV（16字符，不足自动补0）"
+                       style="-fx-font-size:12px; -fx-font-family:'Consolas',monospace;" HBox.hgrow="ALWAYS"/>
+            <Label text="（CBC模式必填，ECB不需要）" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+        </HBox>
+
+        <!-- 输入/输出区 -->
+        <HBox spacing="12" VBox.vgrow="ALWAYS">
+            <VBox spacing="6" HBox.hgrow="ALWAYS"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12;">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="输入（明文 / Base64密文）" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                </HBox>
+                <TextArea fx:id="aesInputArea" VBox.vgrow="ALWAYS" promptText="输入明文（加密）或 Base64 密文（解密）..."
+                          styleClass="json-text-area"/>
+            </VBox>
+            <VBox spacing="6" HBox.hgrow="ALWAYS"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12;">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="输出（Base64密文 / 明文）" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onAesCopyOutput"/>
+                </HBox>
+                <TextArea fx:id="aesOutputArea" VBox.vgrow="ALWAYS" promptText="结果将显示在这里..."
+                          styleClass="json-text-area" editable="false"/>
+            </VBox>
+        </HBox>
+
+        <!-- 操作栏 -->
+        <HBox spacing="8" alignment="CENTER_LEFT"
+              style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:10 14;">
+            <Label fx:id="aesStatusLabel" text="填写密钥后点击加密/解密" style="-fx-text-fill:#666; -fx-font-size:12px;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="⇅ 互换输入/输出" styleClass="json-action-btn" onAction="#onAesSwap"/>
+            <Button text="清空" styleClass="json-action-btn" onAction="#onAesClear"/>
+            <Button text="🔒 加密" styleClass="button-primary" onAction="#onAesEncrypt"
+                    style="-fx-font-size:13px; -fx-padding:6 18; -fx-border-radius:3; -fx-background-radius:3;"/>
+            <Button text="🔓 解密" onAction="#onAesDecrypt"
+                    style="-fx-font-size:13px; -fx-padding:6 18; -fx-border-radius:3; -fx-background-radius:3; -fx-background-color:#3a5a3a; -fx-text-fill:#98c379; -fx-border-color:#4a7a4a; -fx-cursor:hand;"/>
+        </HBox>
+    </VBox>
+
+    <!-- ══════════════════════════════════════════════
+         Base64 面板
+    ══════════════════════════════════════════════ -->
+    <VBox fx:id="base64Pane" spacing="10" VBox.vgrow="ALWAYS" visible="false" managed="false">
+        <HBox spacing="12" alignment="CENTER_LEFT"
+              style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12 14;">
+            <Label text="编码模式:" style="-fx-text-fill:#ccc; -fx-font-size:13px;"/>
+            <ComboBox fx:id="b64ModeCombo" prefWidth="240" style="-fx-font-size:12px;"/>
+            <Label text="（URL安全模式：+ → - , / → _ , 去除填充符 =）"
+                   style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+        </HBox>
+
+        <HBox spacing="12" VBox.vgrow="ALWAYS">
+            <VBox spacing="6" HBox.hgrow="ALWAYS"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12;">
+                <Label text="输入" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                <TextArea fx:id="b64InputArea" VBox.vgrow="ALWAYS" promptText="输入原始文本（编码）或 Base64 字符串（解码）..."
+                          styleClass="json-text-area"/>
+            </VBox>
+            <VBox spacing="6" HBox.hgrow="ALWAYS"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12;">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="输出" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onB64CopyOutput"/>
+                </HBox>
+                <TextArea fx:id="b64OutputArea" VBox.vgrow="ALWAYS" promptText="结果将显示在这里..."
+                          styleClass="json-text-area" editable="false"/>
+            </VBox>
+        </HBox>
+
+        <HBox spacing="8" alignment="CENTER_LEFT"
+              style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:10 14;">
+            <Label fx:id="b64StatusLabel" text="就绪" style="-fx-text-fill:#666; -fx-font-size:12px;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="⇅ 互换" styleClass="json-action-btn" onAction="#onB64Swap"/>
+            <Button text="清空"   styleClass="json-action-btn" onAction="#onB64Clear"/>
+            <Button text="📦 编码" styleClass="button-primary" onAction="#onB64Encode"
+                    style="-fx-font-size:13px; -fx-padding:6 18; -fx-border-radius:3; -fx-background-radius:3;"/>
+            <Button text="📤 解码" onAction="#onB64Decode"
+                    style="-fx-font-size:13px; -fx-padding:6 18; -fx-border-radius:3; -fx-background-radius:3; -fx-background-color:#3a5a3a; -fx-text-fill:#98c379; -fx-border-color:#4a7a4a; -fx-cursor:hand;"/>
+        </HBox>
+    </VBox>
+
+    <!-- ══════════════════════════════════════════════
+         URL 编解码面板
+    ══════════════════════════════════════════════ -->
+    <VBox fx:id="urlPane" spacing="10" VBox.vgrow="ALWAYS" visible="false" managed="false">
+        <HBox spacing="12" VBox.vgrow="ALWAYS">
+            <VBox spacing="6" HBox.hgrow="ALWAYS"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12;">
+                <Label text="输入" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                <TextArea fx:id="urlInputArea" VBox.vgrow="ALWAYS"
+                          promptText="输入原始 URL 或参数（编码）&#10;或输入 %xx 格式字符串（解码）..."
+                          styleClass="json-text-area"/>
+            </VBox>
+            <VBox spacing="6" HBox.hgrow="ALWAYS"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12;">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="输出" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onUrlCopyOutput"/>
+                </HBox>
+                <TextArea fx:id="urlOutputArea" VBox.vgrow="ALWAYS" promptText="结果将显示在这里..."
+                          styleClass="json-text-area" editable="false"/>
+            </VBox>
+        </HBox>
+
+        <HBox spacing="8" alignment="CENTER_LEFT"
+              style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:10 14;">
+            <Label fx:id="urlStatusLabel" text="就绪" style="-fx-text-fill:#666; -fx-font-size:12px;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="⇅ 互换" styleClass="json-action-btn" onAction="#onUrlSwap"/>
+            <Button text="清空"   styleClass="json-action-btn" onAction="#onUrlClear"/>
+            <Button text="🔗 编码" styleClass="button-primary" onAction="#onUrlEncode"
+                    style="-fx-font-size:13px; -fx-padding:6 18; -fx-border-radius:3; -fx-background-radius:3;"/>
+            <Button text="🔓 解码" onAction="#onUrlDecode"
+                    style="-fx-font-size:13px; -fx-padding:6 18; -fx-border-radius:3; -fx-background-radius:3; -fx-background-color:#3a5a3a; -fx-text-fill:#98c379; -fx-border-color:#4a7a4a; -fx-cursor:hand;"/>
+        </HBox>
+    </VBox>
+
+</VBox>
+

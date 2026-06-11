@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import java.util.*;
+import java.util.LinkedHashMap;
 /**
  * JSON 工具类
  * 提供：格式化、压缩、转义/反转义、生成 Java 实体类、转 XML、JSON 对比
@@ -82,6 +83,116 @@ public class JsonUtil {
     // 兼容旧方法签名
     public static String generateJavaClass(String json, String className, boolean useLombok) throws Exception {
         return generateEntityClass(json, className, Language.JAVA, useLombok);
+    }
+
+    // --- 实体类 → JSON 示例 --
+    /**
+     * 将 Java / Python / Go 实体类代码解析为示例 JSON
+     * 策略：正则提取字段名+类型，按类型填充占位值
+     */
+    public static String entityToJson(String code, Language language) throws Exception {
+        if (isBlank(code)) throw new IllegalArgumentException("代码内容不能为空");
+        Map<String, Object> map = new LinkedHashMap<>();
+        switch (language) {
+            case JAVA   -> parseJavaFields(code, map);
+            case PYTHON -> parsePythonFields(code, map);
+            case GO     -> parseGoFields(code, map);
+        }
+        if (map.isEmpty()) throw new IllegalArgumentException("未能从代码中解析出任何字段，请检查格式");
+        return MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(map);
+    }
+
+    private static void parseJavaFields(String code, Map<String, Object> map) {
+        // 匹配：private/public/protected Type fieldName;
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(
+            "(?:private|public|protected)\\s+([\\w<>,\\s]+?)\\s+(\\w+)\\s*;"
+        );
+        java.util.regex.Matcher m = p.matcher(code);
+        while (m.find()) {
+            String type = m.group(1).trim().replaceAll("\\s+", " ");
+            String name = m.group(2).trim();
+            if (name.equals("serialVersionUID")) continue;
+            map.put(name, javaTypePlaceholder(type));
+        }
+    }
+
+    private static void parsePythonFields(String code, Map<String, Object> map) {
+        // 匹配 dataclass 风格：field_name: type  或  field_name: type = default
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(
+            "^\\s{4}(\\w+)\\s*:\\s*([\\w\\[\\],\\s]+?)(?:\\s*=.*)?$",
+            java.util.regex.Pattern.MULTILINE
+        );
+        java.util.regex.Matcher m = p.matcher(code);
+        while (m.find()) {
+            String name = m.group(1).trim();
+            String type = m.group(2).trim();
+            if (name.startsWith("#") || name.equals("pass")) continue;
+            map.put(name, pythonTypePlaceholder(type));
+        }
+    }
+
+    private static void parseGoFields(String code, Map<String, Object> map) {
+        // 匹配 FieldName Type `json:"tag"`  或  FieldName Type
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(
+            "^\\s+(\\w+)\\s+(\\S+).*?(?:json:\"([^\"]+)\")?",
+            java.util.regex.Pattern.MULTILINE
+        );
+        java.util.regex.Matcher m = p.matcher(code);
+        while (m.find()) {
+            String goName = m.group(1).trim();
+            String type   = m.group(2).trim();
+            String jsonTag = m.group(3);
+            if (goName.equals("//") || type.startsWith("//")) continue;
+            // 用 json tag 作 key（如有），否则转 camelCase
+            String key = (jsonTag != null && !jsonTag.isEmpty() && !jsonTag.equals("-"))
+                    ? jsonTag : toCamelCase(goName);
+            map.put(key, goTypePlaceholder(type));
+        }
+    }
+
+    private static Object javaTypePlaceholder(String type) {
+        String t = type.toLowerCase();
+        if (t.equals("string"))               return "example";
+        if (t.matches("int|integer"))         return 0;
+        if (t.matches("long"))                return 0L;
+        if (t.matches("double|float|bigdecimal")) return 0.0;
+        if (t.matches("boolean"))             return false;
+        if (t.startsWith("list<") || t.startsWith("arraylist<")) return new java.util.ArrayList<>();
+        if (t.startsWith("map<"))             return new LinkedHashMap<>();
+        if (t.equals("localdate"))            return "2026-01-01";
+        if (t.equals("localdatetime"))        return "2026-01-01T00:00:00";
+        if (t.equals("date"))                 return "2026-01-01T00:00:00";
+        if (t.equals("biginteger"))           return 0;
+        return null;
+    }
+
+    private static Object pythonTypePlaceholder(String type) {
+        String t = type.toLowerCase().replaceAll("\\s", "");
+        if (t.equals("str"))                  return "example";
+        if (t.equals("int"))                  return 0;
+        if (t.equals("float"))                return 0.0;
+        if (t.equals("bool"))                 return false;
+        if (t.startsWith("list["))            return new java.util.ArrayList<>();
+        if (t.startsWith("dict[") || t.startsWith("dict")) return new LinkedHashMap<>();
+        if (t.startsWith("optional["))        return null;
+        return null;
+    }
+
+    private static Object goTypePlaceholder(String type) {
+        return switch (type) {
+            case "string"               -> "example";
+            case "int", "int32", "int16", "int8", "uint", "uint32" -> 0;
+            case "int64", "uint64"      -> 0;
+            case "float32"              -> 0.0;
+            case "float64"              -> 0.0;
+            case "bool"                 -> false;
+            default -> {
+                if (type.startsWith("[]"))    yield new java.util.ArrayList<>();
+                if (type.startsWith("map["))  yield new LinkedHashMap<>();
+                if (type.startsWith("*"))     yield null;
+                yield null;
+            }
+        };
     }
 
     // --- Java 类生成 ---

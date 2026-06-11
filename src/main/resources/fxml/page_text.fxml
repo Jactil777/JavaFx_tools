@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.devtool.controller.TextPageController"
+      styleClass="page-container"
+      spacing="0"
+      style="-fx-padding: 16;">
+
+    <!-- ── 页面标题 ── -->
+    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 14 0;">
+        <Label text="&#128196;" style="-fx-font-size: 20px;"/>
+        <Label text="文本批量处理" styleClass="title-label"/>
+        <Label text="（切换页面内容不丢失）"
+               style="-fx-text-fill:#4a6fa5; -fx-font-size:12px; -fx-padding:0 0 0 8;"/>
+    </HBox>
+
+    <!-- ── Tab 切换栏 ── -->
+    <HBox spacing="6" style="-fx-padding: 0 0 10 0;">
+        <Button fx:id="tabReplace" text="🔄 批量替换"   onAction="#onTabReplace" styleClass="json-tab,json-tab-active"/>
+        <Button fx:id="tabLines"   text="📋 行操作"     onAction="#onTabLines"   styleClass="json-tab"/>
+        <Button fx:id="tabCase"    text="🔠 大小写转换" onAction="#onTabCase"    styleClass="json-tab"/>
+        <Button fx:id="tabSpaces"  text="⬜ 空格/缩进"  onAction="#onTabSpaces"  styleClass="json-tab"/>
+        <Button fx:id="tabEncode"  text="🔀 编码转换"   onAction="#onTabEncode"  styleClass="json-tab"/>
+        <Button fx:id="tabStats"   text="📊 文本统计"   onAction="#onTabStats"   styleClass="json-tab"/>
+    </HBox>
+
+    <!-- ══════════════════════════════════════════════
+         主体：选项区（左）+ 输入输出（右）
+    ══════════════════════════════════════════════ -->
+    <HBox spacing="10" VBox.vgrow="ALWAYS">
+
+        <!-- ── 左侧：选项面板区 ── -->
+        <VBox spacing="0" prefWidth="240" minWidth="200">
+
+            <!-- ════ 批量替换选项 ════ -->
+            <VBox fx:id="replaceOptionsPane" spacing="10"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:14;">
+                <Label text="替换规则（每行一条）" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                <Label text="格式：旧内容->新内容" style="-fx-text-fill:#555; -fx-font-size:11px;"/>
+                <TextArea fx:id="replaceRulesArea" prefHeight="160"
+                          styleClass="json-text-area"
+                          promptText="hello->Hi&#10;world->Earth&#10;foo->bar"/>
+                <CheckBox fx:id="chkReplaceRegex"      text="正则表达式模式" style="-fx-text-fill:#ccc; -fx-font-size:12px;"/>
+                <CheckBox fx:id="chkReplaceIgnoreCase" text="忽略大小写"    style="-fx-text-fill:#ccc; -fx-font-size:12px;"/>
+                <Button text="🔄 执行替换" styleClass="button-primary" onAction="#onReplace"
+                        maxWidth="Infinity"
+                        style="-fx-font-size:13px; -fx-padding:7 0; -fx-border-radius:4; -fx-background-radius:4;"/>
+            </VBox>
+
+            <!-- ════ 行操作选项 ════ -->
+            <VBox fx:id="linesOptionsPane" spacing="8" visible="false" managed="false"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:14;">
+                <Label text="行操作" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+
+                <!-- 常用操作 -->
+                <Button text="去空行"         maxWidth="Infinity" styleClass="button" onAction="#onRemoveEmpty"
+                        style="-fx-font-size:12px; -fx-padding:5 0; -fx-cursor:hand;"/>
+                <Button text="逆序行"         maxWidth="Infinity" styleClass="button" onAction="#onReverseLines"
+                        style="-fx-font-size:12px; -fx-padding:5 0; -fx-cursor:hand;"/>
+                <Button text="去行首尾空格"    maxWidth="Infinity" styleClass="button" onAction="#onTrimLines"
+                        style="-fx-font-size:12px; -fx-padding:5 0; -fx-cursor:hand;"/>
+                <Button text="去行号"         maxWidth="Infinity" styleClass="button" onAction="#onRemoveLineNumbers"
+                        style="-fx-font-size:12px; -fx-padding:5 0; -fx-cursor:hand;"/>
+
+                <Separator style="-fx-opacity:0.4;"/>
+
+                <!-- 去重 -->
+                <CheckBox fx:id="chkTrimLines" text="比较前先 trim" style="-fx-text-fill:#ccc; -fx-font-size:12px;"/>
+                <Button text="去重复行" maxWidth="Infinity" styleClass="button-primary" onAction="#onRemoveDuplicate"
+                        style="-fx-font-size:12px; -fx-padding:5 0; -fx-cursor:hand;"/>
+
+                <Separator style="-fx-opacity:0.4;"/>
+
+                <!-- 排序 -->
+                <CheckBox fx:id="chkSortAsc"        text="升序（取消则降序）" selected="true"
+                          style="-fx-text-fill:#ccc; -fx-font-size:12px;"/>
+                <CheckBox fx:id="chkSortIgnoreCase" text="排序忽略大小写"
+                          style="-fx-text-fill:#ccc; -fx-font-size:12px;"/>
+                <Button text="行排序" maxWidth="Infinity" styleClass="button-primary" onAction="#onSortLines"
+                        style="-fx-font-size:12px; -fx-padding:5 0; -fx-cursor:hand;"/>
+
+                <Separator style="-fx-opacity:0.4;"/>
+
+                <!-- 添加行号 -->
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <Label text="行号分隔符:" style="-fx-text-fill:#aaa; -fx-font-size:11px;"/>
+                    <TextField fx:id="lineNumSepField" prefWidth="50" text=". " style="-fx-font-size:12px;"/>
+                </HBox>
+                <Button text="添加行号" maxWidth="Infinity" styleClass="button" onAction="#onAddLineNumbers"
+                        style="-fx-font-size:12px; -fx-padding:5 0; -fx-cursor:hand;"/>
+
+                <Separator style="-fx-opacity:0.4;"/>
+
+                <!-- 过滤行 -->
+                <Label text="过滤行" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                <TextField fx:id="filterKeywordField" promptText="关键词或正则..." style="-fx-font-size:12px;"/>
+                <CheckBox fx:id="chkFilterKeep"       text="保留匹配行（取消则删除）" selected="true"
+                          style="-fx-text-fill:#ccc; -fx-font-size:12px;"/>
+                <CheckBox fx:id="chkFilterRegex"      text="正则模式"
+                          style="-fx-text-fill:#ccc; -fx-font-size:12px;"/>
+                <CheckBox fx:id="chkFilterIgnoreCase" text="忽略大小写"
+                          style="-fx-text-fill:#ccc; -fx-font-size:12px;"/>
+                <Button text="过滤行" maxWidth="Infinity" styleClass="button-primary" onAction="#onFilterLines"
+                        style="-fx-font-size:12px; -fx-padding:5 0; -fx-cursor:hand;"/>
+            </VBox>
+
+
+            <!-- ════ 空格缩进选项 ════ -->
+            <VBox fx:id="spacesOptionsPane" spacing="8" visible="false" managed="false"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:14;">
+                <Label text="Tab / 空格设置" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="空格数:" style="-fx-text-fill:#ccc; -fx-font-size:12px;"/>
+                    <TextField fx:id="tabSpaceCountField" text="4" prefWidth="50" style="-fx-font-size:12px;"/>
+                </HBox>
+            </VBox>
+
+            <!-- ════ 编码选项（无额外选项，按钮在右侧主区） ════ -->
+            <VBox fx:id="encodeOptionsPane" spacing="0" visible="false" managed="false"/>
+
+            <!-- ════ 统计面板 ════ -->
+            <VBox fx:id="statsPane" spacing="8" visible="false" managed="false"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:14;">
+                <Label text="文本统计（实时）" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                <VBox spacing="6">
+                    <HBox spacing="10">
+                        <Label text="总字符数:" style="-fx-text-fill:#888; -fx-font-size:12px; -fx-min-width:90;"/>
+                        <Label fx:id="statChars" text="0" style="-fx-text-fill:#61afef; -fx-font-size:13px; -fx-font-weight:bold;"/>
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="非空白字符:" style="-fx-text-fill:#888; -fx-font-size:12px; -fx-min-width:90;"/>
+                        <Label fx:id="statCharsNoSpace" text="0" style="-fx-text-fill:#61afef; -fx-font-size:13px; -fx-font-weight:bold;"/>
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="单词/词数:" style="-fx-text-fill:#888; -fx-font-size:12px; -fx-min-width:90;"/>
+                        <Label fx:id="statWords" text="0" style="-fx-text-fill:#e5c07b; -fx-font-size:13px; -fx-font-weight:bold;"/>
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="行数:" style="-fx-text-fill:#888; -fx-font-size:12px; -fx-min-width:90;"/>
+                        <Label fx:id="statLines" text="0" style="-fx-text-fill:#98c379; -fx-font-size:13px; -fx-font-weight:bold;"/>
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="中文字符:" style="-fx-text-fill:#888; -fx-font-size:12px; -fx-min-width:90;"/>
+                        <Label fx:id="statChinese" text="0" style="-fx-text-fill:#c678dd; -fx-font-size:13px; -fx-font-weight:bold;"/>
+                    </HBox>
+                    <VBox spacing="4">
+                        <Label text="高频字符(Top5):" style="-fx-text-fill:#888; -fx-font-size:12px;"/>
+                        <Label fx:id="statTopChars" text="—"
+                               style="-fx-text-fill:#e06c75; -fx-font-family:'Consolas',monospace; -fx-font-size:12px;" wrapText="true"/>
+                    </VBox>
+                </VBox>
+            </VBox>
+
+        </VBox>
+
+        <!-- ── 右侧：输入/输出 + 操作按钮 ── -->
+        <VBox spacing="8" HBox.hgrow="ALWAYS">
+
+            <!-- 输入区 -->
+            <VBox spacing="6" VBox.vgrow="ALWAYS"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12;">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="输入区" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                    <Label text="（切换页面数据不丢失）" style="-fx-text-fill:#4a6fa5; -fx-font-size:10px;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="粘贴" styleClass="json-action-btn" onAction="#onPasteInput"/>
+                    <Button text="清空" styleClass="json-action-btn" onAction="#onClearInput"/>
+                </HBox>
+                <TextArea fx:id="textInputArea" VBox.vgrow="ALWAYS"
+                          styleClass="json-text-area"
+                          promptText="在此输入或粘贴文本内容...（切换到其他工具页面后回来内容仍在）"/>
+            </VBox>
+
+            <!-- 快捷操作按钮组（大小写/空格/编码模式时显示） -->
+            <!-- 大小写按钮 -->
+            <HBox spacing="6" alignment="CENTER_LEFT"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:8 12;">
+                <Label text="操作:" style="-fx-text-fill:#888; -fx-font-size:11px;"/>
+                <!-- 所有 tab 的快捷按钮都放这里，Controller 根据 Tab 选择显示不同按钮也可以，
+                     为简洁这里全部显示，用户可随意点击 -->
+                <!-- 大小写 -->
+                <Button text="全大写"     styleClass="json-action-btn" onAction="#onToUpper"/>
+                <Button text="全小写"     styleClass="json-action-btn" onAction="#onToLower"/>
+                <Button text="首字母大写" styleClass="json-action-btn" onAction="#onToTitle"/>
+                <Button text="→snake"    styleClass="json-action-btn" onAction="#onToSnake"/>
+                <Button text="→camel"    styleClass="json-action-btn" onAction="#onToCamel"/>
+                <Separator orientation="VERTICAL" style="-fx-padding:0 4;"/>
+                <!-- 空格 -->
+                <Button text="去所有空格"   styleClass="json-action-btn" onAction="#onRemoveAllSpaces"/>
+                <Button text="合并空格"     styleClass="json-action-btn" onAction="#onMergeSpaces"/>
+                <Button text="Tab→空格"    styleClass="json-action-btn" onAction="#onTabToSpaces"/>
+                <Button text="空格→Tab"    styleClass="json-action-btn" onAction="#onSpacesToTab"/>
+                <Separator orientation="VERTICAL" style="-fx-padding:0 4;"/>
+                <!-- 编码 -->
+                <Button text="→Unicode"   styleClass="json-action-btn" onAction="#onToUnicode"/>
+                <Button text="Unicode→"   styleClass="json-action-btn" onAction="#onFromUnicode"/>
+                <Button text="→HTML实体"  styleClass="json-action-btn" onAction="#onToHtmlEntities"/>
+                <Button text="HTML实体→"  styleClass="json-action-btn" onAction="#onFromHtmlEntities"/>
+            </HBox>
+
+            <!-- 输出区 -->
+            <VBox spacing="6" VBox.vgrow="ALWAYS"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12;">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="输出区" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="⬆ 移回输入区" styleClass="json-action-btn" onAction="#onOutputToInput"
+                            style="-fx-text-fill:#e5c07b;"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onCopyOutput"/>
+                    <Button text="清空" styleClass="json-action-btn" onAction="#onClearOutput"/>
+                </HBox>
+                <TextArea fx:id="textOutputArea" VBox.vgrow="ALWAYS"
+                          styleClass="json-text-area"
+                          editable="false"
+                          promptText="操作结果将显示在这里..."/>
+            </VBox>
+
+        </VBox>
+    </HBox>
+
+    <!-- ── 底部状态栏 ── -->
+    <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 8 0 0 0;">
+        <Label fx:id="textStatusLabel" text="就绪 · 内容已保留"
+               style="-fx-text-fill:#888; -fx-font-size:12px;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="全部清空" styleClass="button" onAction="#onClearAll"
+                style="-fx-font-size:12px; -fx-padding:4 14; -fx-border-radius:3; -fx-background-radius:3;"/>
+    </HBox>
+
+</VBox>
+

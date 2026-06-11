@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.devtool.controller.SqlPageController"
+      styleClass="page-container"
+      spacing="0"
+      style="-fx-padding: 16;">
+
+    <!-- ── 页面标题 ── -->
+    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 14 0;">
+        <Label text="&#128452;" style="-fx-font-size: 20px;"/>
+        <Label text="SQL 工具箱" styleClass="title-label"/>
+    </HBox>
+
+    <!-- ── Tab 切换栏 ── -->
+    <HBox spacing="6" style="-fx-padding: 0 0 12 0;">
+        <Button fx:id="tabFormat"  text="✨ 格式化"     onAction="#onTabFormat"  styleClass="json-tab,json-tab-active"/>
+        <Button fx:id="tabCheck"   text="🔍 语法检测"   onAction="#onTabCheck"   styleClass="json-tab"/>
+        <Button fx:id="tabKeyword" text="🔠 关键字大小写" onAction="#onTabKeyword" styleClass="json-tab"/>
+        <Button fx:id="tabParams"  text="🔧 参数填充"   onAction="#onTabParams"  styleClass="json-tab"/>
+        <Button fx:id="tabInsert"  text="📝 INSERT模板"  onAction="#onTabInsert"  styleClass="json-tab"/>
+        <Button fx:id="tabExtract" text="🔎 提取表/字段" onAction="#onTabExtract" styleClass="json-tab"/>
+    </HBox>
+
+    <!-- ══════════════════════════════════════════════
+         主输入/输出面板（格式化 / 语法检测 / 关键字 / 提取 共用）
+    ══════════════════════════════════════════════ -->
+    <VBox fx:id="mainPane" spacing="8" VBox.vgrow="ALWAYS">
+
+        <!-- 关键字选项栏（仅 KEYWORD tab 显示） -->
+        <HBox fx:id="keywordOptionBar" spacing="8" alignment="CENTER_LEFT"
+              managed="false" visible="false"
+              style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:8 14;">
+            <Label text="操作:" style="-fx-text-fill:#ccc; -fx-font-size:13px;"/>
+            <Button fx:id="btnKeyUpper" text="关键字全部大写 (SELECT FROM ...)" styleClass="button-primary"
+                    onAction="#onKeyUpper"
+                    style="-fx-font-size:12px; -fx-padding:5 14; -fx-border-radius:3; -fx-background-radius:3;"/>
+            <Button fx:id="btnKeyLower" text="关键字全部小写 (select from ...)"
+                    onAction="#onKeyLower"
+                    style="-fx-font-size:12px; -fx-padding:5 14; -fx-border-radius:3; -fx-background-radius:3; -fx-background-color:#3a5a3a; -fx-text-fill:#98c379; -fx-border-color:#4a7a4a; -fx-cursor:hand;"/>
+        </HBox>
+
+        <!-- 输入/输出 左右分栏 -->
+        <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS"
+                   style="-fx-background-color:transparent; -fx-border-color:transparent;">
+            <!-- 输入区 -->
+            <VBox styleClass="json-panel" spacing="6" minWidth="200">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="SQL 输入" styleClass="json-panel-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="粘贴" styleClass="json-action-btn" onAction="#onSqlPaste"/>
+                    <Button text="示例" styleClass="json-action-btn" onAction="#onSqlSample"/>
+                    <Button text="清空" styleClass="json-action-btn" onAction="#onSqlClear"/>
+                </HBox>
+                <TextArea fx:id="sqlInputArea" styleClass="json-text-area" VBox.vgrow="ALWAYS"
+                          promptText="在此粘贴或输入 SQL 语句..."
+                          style="-fx-font-family:'JetBrains Mono','Consolas',monospace; -fx-font-size:13px;"/>
+            </VBox>
+
+            <!-- 输出区 -->
+            <VBox styleClass="json-panel" spacing="6" minWidth="200">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="输出结果" styleClass="json-panel-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onSqlCopyOutput"/>
+                    <Button text="⇅ 互换" styleClass="json-action-btn" onAction="#onSqlSwap"/>
+                </HBox>
+                <!-- 格式化/关键字模式输出 -->
+                <TextArea fx:id="sqlOutputArea" styleClass="json-text-area" VBox.vgrow="ALWAYS"
+                          promptText="结果将显示在这里..." editable="false"
+                          style="-fx-font-family:'JetBrains Mono','Consolas',monospace; -fx-font-size:13px;"/>
+
+                <!-- 语法检测结果（仅 CHECK tab 显示） -->
+                <VBox fx:id="checkResultPane" VBox.vgrow="ALWAYS" spacing="4"
+                      managed="false" visible="false">
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label text="检测结果" styleClass="json-panel-title"/>
+                        <Label fx:id="checkSummaryLabel" text=""
+                               style="-fx-font-size:12px; -fx-padding:0 0 0 8;"/>
+                    </HBox>
+                    <ListView fx:id="checkResultList" VBox.vgrow="ALWAYS"
+                              style="-fx-background-color:#1e1e1e; -fx-control-inner-background:#1e1e1e;
+                                     -fx-font-family:'Consolas',monospace; -fx-font-size:13px;
+                                     -fx-border-color:#444; -fx-border-radius:3; -fx-background-radius:3;"/>
+                </VBox>
+
+                <!-- 提取元信息（仅 EXTRACT tab 显示） -->
+                <VBox fx:id="extractPane" VBox.vgrow="ALWAYS" spacing="10"
+                      managed="false" visible="false">
+                    <Label text="提取结果" styleClass="json-panel-title"/>
+                    <VBox spacing="6"
+                          style="-fx-background-color:#1e1e1e; -fx-border-color:#444; -fx-border-radius:3; -fx-background-radius:3; -fx-padding:12;">
+                        <Label text="📦 涉及的表" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                        <Label fx:id="extractTablesLabel" text="—"
+                               style="-fx-text-fill:#61afef; -fx-font-family:'Consolas',monospace; -fx-font-size:13px;" wrapText="true"/>
+                    </VBox>
+                    <VBox spacing="6"
+                          style="-fx-background-color:#1e1e1e; -fx-border-color:#444; -fx-border-radius:3; -fx-background-radius:3; -fx-padding:12;">
+                        <Label text="🔹 SELECT 的字段" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                        <Label fx:id="extractFieldsLabel" text="—"
+                               style="-fx-text-fill:#98c379; -fx-font-family:'Consolas',monospace; -fx-font-size:13px;" wrapText="true"/>
+                    </VBox>
+                </VBox>
+            </VBox>
+        </SplitPane>
+    </VBox>
+
+    <!-- ══════════════════════════════════════════════
+         参数填充面板
+    ══════════════════════════════════════════════ -->
+    <VBox fx:id="paramsPane" spacing="8" VBox.vgrow="ALWAYS" visible="false" managed="false">
+        <HBox spacing="12" VBox.vgrow="ALWAYS">
+            <!-- SQL 输入 -->
+            <VBox spacing="6" HBox.hgrow="ALWAYS"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12;">
+                <Label text="含 ? 占位符的 SQL" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                <TextArea fx:id="paramsSqlInput" VBox.vgrow="ALWAYS" styleClass="json-text-area"
+                          promptText="例：SELECT * FROM users WHERE id = ? AND name = ?"/>
+            </VBox>
+            <!-- 参数值 -->
+            <VBox spacing="6" prefWidth="180" minWidth="140"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12;">
+                <Label text="参数值（每行一个）" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                <TextArea fx:id="paramsValuesInput" VBox.vgrow="ALWAYS" styleClass="json-text-area"
+                          promptText="1001&#10;张三"/>
+            </VBox>
+            <!-- 输出 -->
+            <VBox spacing="6" HBox.hgrow="ALWAYS"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12;">
+                <HBox alignment="CENTER_LEFT" spacing="6">
+                    <Label text="填充结果" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onCopyParamsResult"/>
+                </HBox>
+                <TextArea fx:id="paramsOutputArea" VBox.vgrow="ALWAYS" styleClass="json-text-area"
+                          editable="false" promptText="填充后的 SQL 将显示在这里..."/>
+            </VBox>
+        </HBox>
+        <HBox spacing="8" alignment="CENTER_LEFT"
+              style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:10 14;">
+            <Label fx:id="paramsStatusLabel" text="填写 SQL 和参数值后点击填充"
+                   style="-fx-text-fill:#666; -fx-font-size:12px;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="清空" styleClass="json-action-btn" onAction="#onClearParams"/>
+            <Button text="🔧 填充参数" styleClass="button-primary" onAction="#onFillParams"
+                    style="-fx-font-size:13px; -fx-padding:6 18; -fx-border-radius:3; -fx-background-radius:3;"/>
+        </HBox>
+    </VBox>
+
+    <!-- ══════════════════════════════════════════════
+         INSERT 模板生成面板
+    ══════════════════════════════════════════════ -->
+    <VBox fx:id="insertPane" spacing="8" visible="false" managed="false">
+        <HBox spacing="12" alignment="CENTER_LEFT"
+              style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12 14;">
+            <Label text="表名:" style="-fx-text-fill:#ccc; -fx-font-size:13px;"/>
+            <TextField fx:id="insertTableField" prefWidth="200" promptText="例：user_info"
+                       style="-fx-font-family:'Consolas',monospace; -fx-font-size:13px;"/>
+        </HBox>
+        <HBox spacing="12" VBox.vgrow="ALWAYS">
+            <VBox spacing="6" prefWidth="260"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12;">
+                <Label text="字段列表（每行一个，或逗号分隔）"
+                       style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                <TextArea fx:id="insertColumnsArea" VBox.vgrow="ALWAYS" styleClass="json-text-area"
+                          promptText="id&#10;username&#10;email&#10;created_at"/>
+            </VBox>
+            <VBox spacing="6" HBox.hgrow="ALWAYS"
+                  style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:12;">
+                <HBox alignment="CENTER_LEFT" spacing="6">
+                    <Label text="INSERT 模板" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="复制" styleClass="json-action-btn" onAction="#onCopyInsert"/>
+                </HBox>
+                <TextArea fx:id="insertOutputArea" VBox.vgrow="ALWAYS" styleClass="json-text-area"
+                          editable="false" promptText="INSERT 模板将生成在这里..."/>
+            </VBox>
+        </HBox>
+        <HBox spacing="8" alignment="CENTER_LEFT"
+              style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:10 14;">
+            <Label fx:id="insertStatusLabel" text="填写表名和字段后点击生成"
+                   style="-fx-text-fill:#666; -fx-font-size:12px;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="清空" styleClass="json-action-btn" onAction="#onClearInsert"/>
+            <Button text="📝 生成 INSERT 模板" styleClass="button-primary" onAction="#onGenInsert"
+                    style="-fx-font-size:13px; -fx-padding:6 18; -fx-border-radius:3; -fx-background-radius:3;"/>
+        </HBox>
+    </VBox>
+
+    <!-- ── 底部状态栏 ── -->
+    <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 8 0 0 0;">
+        <Button text="执行" styleClass="button-primary, json-run-btn"
+                onAction="#onFormat"
+                style="-fx-font-size:13px; -fx-font-weight:bold; -fx-padding:7 24; -fx-border-radius:4; -fx-background-radius:4;"/>
+        <Button text="语法检测" styleClass="button" onAction="#onCheckSyntax"
+                style="-fx-font-size:12px; -fx-padding:6 16; -fx-border-radius:3; -fx-background-radius:3;"/>
+        <Button text="去注释" styleClass="button" onAction="#onRemoveComments"
+                style="-fx-font-size:12px; -fx-padding:6 14; -fx-border-radius:3; -fx-background-radius:3;"/>
+        <Button text="压缩" styleClass="button" onAction="#onCompress"
+                style="-fx-font-size:12px; -fx-padding:6 14; -fx-border-radius:3; -fx-background-radius:3;"/>
+        <Button text="提取表/字段" styleClass="button" onAction="#onExtractMeta"
+                style="-fx-font-size:12px; -fx-padding:6 14; -fx-border-radius:3; -fx-background-radius:3;"/>
+        <Label fx:id="sqlStatusLabel" text="就绪" style="-fx-text-fill:#888; -fx-font-size:12px;"/>
+    </HBox>
+
+</VBox>
+

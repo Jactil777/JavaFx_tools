@@ -23,8 +23,9 @@
         <Button fx:id="tabCompress" text="压缩"      styleClass="json-tab"                  onAction="#onTabCompress"/>
         <Button fx:id="tabEscape"   text="转义"      styleClass="json-tab"                  onAction="#onTabEscape"/>
         <Button fx:id="tabUnescape" text="反转义"    styleClass="json-tab"                  onAction="#onTabUnescape"/>
-        <Button fx:id="tabEntity"   text="生成实体类" styleClass="json-tab"                 onAction="#onTabEntity"/>
-        <Button fx:id="tabDiff"     text="JSON 对比" styleClass="json-tab"                  onAction="#onTabDiff"/>
+        <Button fx:id="tabEntity"      text="生成实体类"  styleClass="json-tab"                 onAction="#onTabEntity"/>
+        <Button fx:id="tabEntityToJson" text="实体类→JSON" styleClass="json-tab"                onAction="#onTabEntityToJson"/>
+        <Button fx:id="tabDiff"        text="JSON 对比"   styleClass="json-tab"                 onAction="#onTabDiff"/>
     </HBox>
 
     <!-- ══ 普通模式面板 ══ -->
@@ -75,6 +76,12 @@
                     <Label text="类名：" style="-fx-text-fill:#aaaaaa; -fx-font-size:12px;"/>
                     <TextField fx:id="classNameField" promptText="ClassName" prefWidth="130" style="-fx-font-size:12px;"/>
                     <CheckBox fx:id="lombokCheck" text="Lombok" style="-fx-text-fill:#bbbbbb; -fx-font-size:12px;"/>
+                </HBox>
+                <HBox fx:id="entityToJsonOptionsBar" spacing="10" alignment="CENTER_LEFT" managed="false" visible="false">
+                    <Label text="语言：" style="-fx-text-fill:#aaaaaa; -fx-font-size:12px;"/>
+                    <ComboBox fx:id="entityToJsonLangCombo" prefWidth="100" style="-fx-font-size:12px;"/>
+                    <Label text="粘贴实体类代码 → 点击执行 → 生成示例 JSON"
+                           style="-fx-text-fill:#666; -fx-font-size:11px;"/>
                 </HBox>
                 <TreeView fx:id="jsonTreeView" styleClass="json-tree-view" VBox.vgrow="ALWAYS" managed="false" visible="false"/>
                 <TextArea fx:id="outputArea" styleClass="json-text-area"

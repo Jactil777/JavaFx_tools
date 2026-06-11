@@ -24,7 +24,7 @@ public class JsonPageController extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(JsonPageController.class);
 
     // ─── Tab 按钮 ────────────────────────────────────────────────────────
-    @FXML private Button tabFormat, tabCompress, tabEscape, tabUnescape, tabEntity, tabDiff;
+    @FXML private Button tabFormat, tabCompress, tabEscape, tabUnescape, tabEntity, tabEntityToJson, tabDiff;
 
     // ─── 普通模式 ────────────────────────────────────────────────────────
     @FXML private VBox     normalPane;
@@ -36,6 +36,10 @@ public class JsonPageController extends BaseController {
     @FXML private ComboBox<String> languageCombo;
     @FXML private TextField classNameField;
     @FXML private CheckBox lombokCheck;
+
+    // ─── 实体类→JSON 选项栏 ───────────────────────────────────────────────
+    @FXML private HBox     entityToJsonOptionsBar;
+    @FXML private ComboBox<String> entityToJsonLangCombo;
 
     // ─── 普通模式搜索 ─────────────────────────────────────────────────────
     @FXML private HBox      normalSearchBar;
@@ -68,7 +72,7 @@ public class JsonPageController extends BaseController {
     private List<Integer> diffSearchMatches   = new ArrayList<>();
     private int           diffSearchIdx       = -1;
 
-    private enum Mode { FORMAT, COMPRESS, ESCAPE, UNESCAPE, ENTITY, DIFF }
+    private enum Mode { FORMAT, COMPRESS, ESCAPE, UNESCAPE, ENTITY, ENTITY_TO_JSON, DIFF }
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -135,6 +139,10 @@ public class JsonPageController extends BaseController {
         // 初始化语言选择器
         languageCombo.getItems().addAll("Java", "Python", "Go");
         languageCombo.setValue("Java");
+
+        // 初始化实体类→JSON 语言选择器
+        entityToJsonLangCombo.getItems().addAll("Java", "Python", "Go");
+        entityToJsonLangCombo.setValue("Java");
         // Lombok 选项只对 Java 有效
         languageCombo.valueProperty().addListener((obs, o, n) -> {
             boolean isJava = "Java".equals(n);
@@ -267,27 +275,36 @@ public class JsonPageController extends BaseController {
 
     // ─── Tab 切换 ─────────────────────────────────────────────────────────
 
-    @FXML private void onTabFormat()   { switchTab(Mode.FORMAT,   tabFormat);   entityOptionsBar.setVisible(false); entityOptionsBar.setManaged(false); }
-    @FXML private void onTabCompress() { switchTab(Mode.COMPRESS, tabCompress); entityOptionsBar.setVisible(false); entityOptionsBar.setManaged(false); }
-    @FXML private void onTabEscape()   { switchTab(Mode.ESCAPE,   tabEscape);   entityOptionsBar.setVisible(false); entityOptionsBar.setManaged(false); }
+    @FXML private void onTabFormat()   { switchTab(Mode.FORMAT,   tabFormat);   entityOptionsBar.setVisible(false); entityOptionsBar.setManaged(false); entityToJsonOptionsBar.setVisible(false); entityToJsonOptionsBar.setManaged(false); }
+    @FXML private void onTabCompress() { switchTab(Mode.COMPRESS, tabCompress); entityOptionsBar.setVisible(false); entityOptionsBar.setManaged(false); entityToJsonOptionsBar.setVisible(false); entityToJsonOptionsBar.setManaged(false); }
+    @FXML private void onTabEscape()   { switchTab(Mode.ESCAPE,   tabEscape);   entityOptionsBar.setVisible(false); entityOptionsBar.setManaged(false); entityToJsonOptionsBar.setVisible(false); entityToJsonOptionsBar.setManaged(false); }
     @FXML private void onTabUnescape() {
         switchTab(Mode.UNESCAPE, tabUnescape);
         entityOptionsBar.setVisible(false); entityOptionsBar.setManaged(false);
+        entityToJsonOptionsBar.setVisible(false); entityToJsonOptionsBar.setManaged(false);
         inputArea.setPromptText("在此粘贴已转义的 JSON 字符串...");
     }
     @FXML private void onTabEntity() {
         switchTab(Mode.ENTITY, tabEntity);
         entityOptionsBar.setVisible(true); entityOptionsBar.setManaged(true);
+        entityToJsonOptionsBar.setVisible(false); entityToJsonOptionsBar.setManaged(false);
         inputArea.setPromptText("在此粘贴 JSON 对象 {} 或对象数组 [{}]...");
+    }
+    @FXML private void onTabEntityToJson() {
+        switchTab(Mode.ENTITY_TO_JSON, tabEntityToJson);
+        entityOptionsBar.setVisible(false); entityOptionsBar.setManaged(false);
+        entityToJsonOptionsBar.setVisible(true); entityToJsonOptionsBar.setManaged(true);
+        inputArea.setPromptText("在此粘贴 Java/Python/Go 实体类代码，自动解析字段生成示例 JSON...");
     }
     @FXML private void onTabDiff() {
         switchTab(Mode.DIFF, tabDiff);
         entityOptionsBar.setVisible(false); entityOptionsBar.setManaged(false);
+        entityToJsonOptionsBar.setVisible(false); entityToJsonOptionsBar.setManaged(false);
     }
 
     private void switchTab(Mode mode, Button activeBtn) {
         currentMode = mode;
-        for (Button b : new Button[]{tabFormat, tabCompress, tabEscape, tabUnescape, tabEntity, tabDiff})
+        for (Button b : new Button[]{tabFormat, tabCompress, tabEscape, tabUnescape, tabEntity, tabEntityToJson, tabDiff})
             b.getStyleClass().removeAll("json-tab-active");
         activeBtn.getStyleClass().add("json-tab-active");
 
@@ -302,7 +319,7 @@ public class JsonPageController extends BaseController {
             outputArea.clear();
             jsonTreeView.setRoot(null);
             lastFormattedJson = null;
-            if (mode != Mode.UNESCAPE && mode != Mode.ENTITY) inputArea.setPromptText("在此粘贴 JSON...");
+            if (mode != Mode.UNESCAPE && mode != Mode.ENTITY && mode != Mode.ENTITY_TO_JSON) inputArea.setPromptText("在此粘贴 JSON...");
             // 关闭搜索栏
             hideNormalSearch();
         } else {
@@ -372,6 +389,14 @@ public class JsonPageController extends BaseController {
                             default -> JsonUtil.Language.JAVA;
                         };
                         yield JsonUtil.generateEntityClass(input, cn, lang, lombokCheck.isSelected());
+                    }
+                    case ENTITY_TO_JSON -> {
+                        JsonUtil.Language lang2 = switch(entityToJsonLangCombo.getValue()) {
+                            case "Python" -> JsonUtil.Language.PYTHON;
+                            case "Go"     -> JsonUtil.Language.GO;
+                            default       -> JsonUtil.Language.JAVA;
+                        };
+                        yield JsonUtil.entityToJson(input, lang2);
                     }
                     default -> "";
                 };
