@@ -20,7 +20,8 @@ public enum PageEnum {
     TIME_TOOL    ("⏱ 时间戳工具",  "/fxml/page_time.fxml"),
     SQL_TOOL     ("🗄 SQL工具",     "/fxml/page_sql.fxml"),
     TEXT_TOOL    ("📝 文本处理",    "/fxml/page_text.fxml"),
-    GIT_REPORT   ("📊 开发日报",    "/fxml/page_git_report.fxml");
+    GIT_REPORT   ("📊 开发日报",    "/fxml/page_git_report.fxml"),
+    FISH_TOOL    ("🔧 调试工具",    "/fxml/page_fish.fxml");
 
     // ========== 后续在这里追加业务页面（取消注释即可） ==========
 

@@ -149,6 +149,25 @@
         </VBox>
     </HBox>
 
+    <!-- 第四行 -->
+    <HBox spacing="12" style="-fx-padding:0 0 12 0;">
+        <!-- 调试工具（摸鱼神器） -->
+        <VBox styleClass="home-card" HBox.hgrow="ALWAYS" spacing="6">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="&#128640;" style="-fx-font-size:20px;"/>
+                <Label text="调试工具" style="-fx-text-fill:#e0e0e0; -fx-font-size:14px; -fx-font-weight:bold;"/>
+                <Label text="（内置浏览器）" style="-fx-text-fill:#4a6fa5; -fx-font-size:11px;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="✅" style="-fx-font-size:11px;"/>
+            </HBox>
+            <Label text="内置浏览器 · 深色主题注入 · Ctrl+W 一键 Boss 键切换掩护代码界面"
+                   style="-fx-text-fill:#888; -fx-font-size:11px;" wrapText="true"/>
+        </VBox>
+        <!-- 占位 -->
+        <Region HBox.hgrow="ALWAYS"/>
+        <Region HBox.hgrow="ALWAYS"/>
+    </HBox>
+
     <Region VBox.vgrow="ALWAYS"/>
 
     <!-- ── 底部：使用提示 + 版权 ── -->

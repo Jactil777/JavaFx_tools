@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.devtool.controller.FishPageController"
+      spacing="0"
+      style="-fx-background-color:#2b2b2b; -fx-padding:0;">
+
+    <!-- ── 地址栏 & 工具栏 ── -->
+    <HBox spacing="4" alignment="CENTER_LEFT"
+          style="-fx-background-color:#3c3f41; -fx-border-color:#222; -fx-border-width:0 0 1 0; -fx-padding:6 10;">
+
+        <!-- 导航按钮 -->
+        <Button fx:id="btnBack" text="&#8592;" onAction="#onBack" disable="true"
+                style="-fx-background-color:#3c3f41; -fx-text-fill:#aaa; -fx-font-size:16px;
+                       -fx-border-color:transparent; -fx-cursor:hand; -fx-padding:2 8;"/>
+        <Button fx:id="btnForward" text="&#8594;" onAction="#onForward" disable="true"
+                style="-fx-background-color:#3c3f41; -fx-text-fill:#aaa; -fx-font-size:16px;
+                       -fx-border-color:transparent; -fx-cursor:hand; -fx-padding:2 8;"/>
+        <Button fx:id="btnRefresh" text="&#8635;" onAction="#onRefresh"
+                style="-fx-background-color:#3c3f41; -fx-text-fill:#aaa; -fx-font-size:16px;
+                       -fx-border-color:transparent; -fx-cursor:hand; -fx-padding:2 8;"/>
+        <Button text="&#127968;" onAction="#onHome"
+                style="-fx-background-color:#3c3f41; -fx-text-fill:#aaa; -fx-font-size:14px;
+                       -fx-border-color:transparent; -fx-cursor:hand; -fx-padding:2 8;"/>
+
+        <!-- URL 输入框 -->
+        <TextField fx:id="urlField" HBox.hgrow="ALWAYS"
+                   onKeyPressed="#onUrlKeyPressed"
+                   promptText="输入网址或搜索关键词（回车访问）"
+                   style="-fx-background-color:#2b2b2b; -fx-text-fill:#cccccc;
+                          -fx-border-color:#555; -fx-border-radius:3; -fx-background-radius:3;
+                          -fx-font-family:'Consolas',monospace; -fx-font-size:13px; -fx-padding:4 8;"/>
+        <Button fx:id="btnGo" text="Go" onAction="#onGo" styleClass="button-primary"
+                style="-fx-padding:4 14; -fx-border-radius:3; -fx-background-radius:3; -fx-cursor:hand;"/>
+
+        <!-- 快捷网址 -->
+        <ComboBox fx:id="quickLinkCombo" prefWidth="120"
+                  style="-fx-font-size:12px; -fx-background-color:#3c3f41;"/>
+
+        <!-- 分隔 -->
+        <Separator orientation="VERTICAL" style="-fx-padding:0 6;"/>
+
+        <!-- 缩放 -->
+        <Label text="缩放:" style="-fx-text-fill:#777; -fx-font-size:11px;"/>
+        <Slider fx:id="zoomSlider" min="0.5" max="1.5" value="1.0" prefWidth="80"
+                style="-fx-accent:#4a6fa5;"/>
+
+        <!-- 深色注入 -->
+        <CheckBox fx:id="chkDarkInject" text="深色" selected="true" onAction="#onDarkInjectChanged"
+                  style="-fx-text-fill:#888; -fx-font-size:11px;"/>
+
+        <!-- Boss键 —— 最右，醒目 -->
+        <Button fx:id="btnBoss" text="&#128308; Boss键" onAction="#toggleBossMode"
+                style="-fx-background-color:#5a2a2a; -fx-text-fill:#ff8888;
+                       -fx-border-color:#7a3a3a; -fx-border-radius:3; -fx-background-radius:3;
+                       -fx-font-size:12px; -fx-font-weight:bold; -fx-padding:4 12; -fx-cursor:hand;"/>
+    </HBox>
+
+    <!-- ── 加载进度条 ── -->
+    <ProgressBar fx:id="loadProgress" maxWidth="Infinity" prefHeight="2"
+                 visible="false"
+                 style="-fx-accent:#4a6fa5; -fx-background-color:transparent; -fx-padding:0;"/>
+
+    <!-- ── 主内容区（浏览器 / Boss伪装） ── -->
+    <StackPane fx:id="browserContainer" VBox.vgrow="ALWAYS">
+
+        <!-- 正常浏览器区域 -->
+        <VBox fx:id="browserPane" style="-fx-background-color:#2b2b2b;">
+            <!-- WebView 由 Controller 动态插入到此 VBox 的第0个子节点 -->
+        </VBox>
+
+        <!-- Boss键假界面：一段 Java 代码 -->
+        <VBox fx:id="bossPane" managed="false" visible="false"
+              style="-fx-background-color:#1e1e1e; -fx-padding:20 30;">
+            <HBox spacing="12" alignment="CENTER_LEFT" style="-fx-padding:0 0 12 0;">
+                <Label text="&#128269; UserServiceImpl.java" style="-fx-text-fill:#888; -fx-font-size:12px;"/>
+                <Label text="代码审查中..." style="-fx-text-fill:#4a6fa5; -fx-font-size:11px;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="&#128307; 恢复浏览" onAction="#toggleBossMode"
+                        style="-fx-background-color:#2a2a2a; -fx-text-fill:#666; -fx-font-size:11px;
+                               -fx-border-color:#333; -fx-border-radius:3; -fx-background-radius:3;
+                               -fx-padding:2 10; -fx-cursor:hand;"/>
+            </HBox>
+            <TextArea editable="false" wrapText="false" VBox.vgrow="ALWAYS"
+                      style="-fx-background-color:#1e1e1e; -fx-control-inner-background:#1e1e1e;
+                             -fx-text-fill:#a9b7c6; -fx-border-color:transparent;
+                             -fx-font-family:'JetBrains Mono','Consolas',monospace; -fx-font-size:13px;"
+                      text="// =========================================================&#10;// UserServiceImpl.java  |  代码审查中...&#10;// =========================================================&#10;&#10;@Service&#10;@Transactional(rollbackFor = Exception.class)&#10;public class UserServiceImpl implements UserService {&#10;&#10;    @Autowired&#10;    private UserMapper userMapper;&#10;&#10;    @Autowired&#10;    private RedisTemplate&lt;String, Object&gt; redisTemplate;&#10;&#10;    private static final String CACHE_KEY = &quot;user:detail:&quot;;&#10;&#10;    @Override&#10;    public UserDTO getUserById(Long userId) {&#10;        // 先查缓存&#10;        String cacheKey = CACHE_KEY + userId;&#10;        UserDTO cached = (UserDTO) redisTemplate.opsForValue().get(cacheKey);&#10;        if (cached != null) {&#10;            log.debug(&quot;命中缓存 userId={}&quot;, userId);&#10;            return cached;&#10;        }&#10;        // 查数据库&#10;        User user = userMapper.selectById(userId);&#10;        if (user == null) throw new BizException(ErrorCode.USER_NOT_FOUND);&#10;        UserDTO dto = UserConverter.INSTANCE.toDTO(user);&#10;        // 写入缓存 TTL 30分钟&#10;        redisTemplate.opsForValue().set(cacheKey, dto, 30, TimeUnit.MINUTES);&#10;        return dto;&#10;    }&#10;&#10;    @Override&#10;    public PageResult&lt;UserDTO&gt; pageList(UserQueryParam param) {&#10;        Page&lt;User&gt; page = new Page&lt;&gt;(param.getPage(), param.getSize());&#10;        LambdaQueryWrapper&lt;User&gt; wrapper = new LambdaQueryWrapper&lt;User&gt;()&#10;            .like(StringUtils.hasText(param.getName()), User::getUsername, param.getName())&#10;            .eq(param.getStatus() != null, User::getStatus, param.getStatus())&#10;            .orderByDesc(User::getCreateTime);&#10;        IPage&lt;User&gt; result = userMapper.selectPage(page, wrapper);&#10;        return PageResult.of(result, UserConverter.INSTANCE::toDTO);&#10;    }&#10;&#10;    // TODO: 补充单元测试，覆盖率需达到 80%&#10;    // FIXME: 并发下 Redis 缓存击穿问题待优化&#10;}"/>
+        </VBox>
+
+    </StackPane>
+
+    <!-- ── 底部状态栏 ── -->
+    <HBox spacing="10" alignment="CENTER_LEFT"
+          style="-fx-background-color:#3c3f41; -fx-border-color:#222; -fx-border-width:1 0 0 0;
+                 -fx-padding:3 10; -fx-min-height:22;">
+        <Label fx:id="loadingLabel" text="" visible="false"
+               style="-fx-text-fill:#e5c07b; -fx-font-size:11px;"/>
+        <Label fx:id="statusLabel" text="就绪 · 按 Ctrl+W 切换掩护模式"
+               style="-fx-text-fill:#666; -fx-font-size:11px;" HBox.hgrow="ALWAYS"/>
+        <Label text="Ctrl+W = Boss键" style="-fx-text-fill:#3a3a3a; -fx-font-size:10px;"/>
+    </HBox>
+
+</VBox>
+

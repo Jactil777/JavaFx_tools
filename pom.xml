@@ -57,6 +57,13 @@
             <version>${javafx.version}</version>
             <classifier>win</classifier>
         </dependency>
+        <!-- JavaFX WebView（内嵌浏览器） -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+            <version>${javafx.version}</version>
+            <classifier>win</classifier>
+        </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
