@@ -1,26 +1,165 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
 <VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.devtool.controller.EmptyPageController"
-      alignment="CENTER" spacing="16"
-      styleClass="page-container">
+      styleClass="page-container"
+      spacing="0"
+      style="-fx-padding: 30 40;">
 
-    <Label text="⚒" style="-fx-font-size: 52px;"/>
-    <Label fx:id="titleLabel" text="欢迎使用 DevToolBox 开发者工具箱" styleClass="title-label"/>
-    <Separator prefWidth="300"/>
-    <Label fx:id="descLabel" text="请在左侧选择需要使用的工具" styleClass="desc-label"/>
-    <Label fx:id="versionLabel" text="版本：v1.0.0" styleClass="version-label"/>
+    <!-- ── 顶部：应用标题 ── -->
+    <HBox alignment="CENTER_LEFT" spacing="16" style="-fx-padding: 0 0 24 0;">
+        <Label text="&#9874;" style="-fx-font-size: 42px;"/>
+        <VBox spacing="4">
+            <Label fx:id="titleLabel" text="DevToolBox 开发者工具箱" styleClass="title-label"
+                   style="-fx-font-size:26px;"/>
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Label fx:id="versionLabel" text="v1.0.8" styleClass="version-label"
+                       style="-fx-font-size:13px; -fx-background-color:#2a3a2a; -fx-text-fill:#98c379;
+                              -fx-padding:2 10; -fx-border-radius:10; -fx-background-radius:10;"/>
+                <Label text="Java 17 + JavaFX 17  ·  纯本地运算，无网络请求"
+                       style="-fx-text-fill:#555; -fx-font-size:12px;"/>
+            </HBox>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <!-- 统计 -->
+        <VBox alignment="CENTER_RIGHT" spacing="4">
+            <Label fx:id="statsToolLabel" text="9 个工具"
+                   style="-fx-text-fill:#4a6fa5; -fx-font-size:18px; -fx-font-weight:bold;"/>
+            <Label text="已上线" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+        </VBox>
+    </HBox>
 
-    <VBox alignment="CENTER" spacing="8" style="-fx-padding: 30 0 0 0;">
-        <Label text="即将支持的工具：" styleClass="feature-title-label"/>
-        <Label text="🔐 加密解密    |    ⏱ 时间戳工具    |    🗄 SQL 格式化    |    📝 文本批量处理" styleClass="feature-label"/>
-    </VBox>
+    <Separator style="-fx-opacity:0.3;"/>
+
+    <!-- ── 中部：工具网格 ── -->
+    <Label text="&#128640; 所有工具" style="-fx-text-fill:#888; -fx-font-size:12px; -fx-font-weight:bold; -fx-padding:16 0 12 0;"/>
+
+    <!-- 第一行 -->
+    <HBox spacing="12" style="-fx-padding:0 0 12 0;">
+        <!-- JSON 工具箱 -->
+        <VBox styleClass="home-card" HBox.hgrow="ALWAYS" spacing="6">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="&#128203;" style="-fx-font-size:20px;"/>
+                <Label text="JSON 工具箱" style="-fx-text-fill:#e0e0e0; -fx-font-size:14px; -fx-font-weight:bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="✅" style="-fx-font-size:11px;"/>
+            </HBox>
+            <Label text="格式化 · 压缩 · 转义 · JSON对比差异 · 生成Java/Python/Go实体类 · 实体类→JSON"
+                   style="-fx-text-fill:#888; -fx-font-size:11px;" wrapText="true"/>
+        </VBox>
+        <!-- 随机密码 -->
+        <VBox styleClass="home-card" HBox.hgrow="ALWAYS" spacing="6">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="&#128272;" style="-fx-font-size:20px;"/>
+                <Label text="随机密码生成" style="-fx-text-fill:#e0e0e0; -fx-font-size:14px; -fx-font-weight:bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="✅" style="-fx-font-size:11px;"/>
+            </HBox>
+            <Label text="可配置长度/字符集/规则 · 强度评估 · 批量生成 · 排除易混淆字符"
+                   style="-fx-text-fill:#888; -fx-font-size:11px;" wrapText="true"/>
+        </VBox>
+        <!-- 二维码 -->
+        <VBox styleClass="home-card" HBox.hgrow="ALWAYS" spacing="6">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="&#128247;" style="-fx-font-size:20px;"/>
+                <Label text="二维码生成" style="-fx-text-fill:#e0e0e0; -fx-font-size:14px; -fx-font-weight:bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="✅" style="-fx-font-size:11px;"/>
+            </HBox>
+            <Label text="文本/网址/邮箱 · 可调尺寸 · 保存PNG · 复制到剪贴板"
+                   style="-fx-text-fill:#888; -fx-font-size:11px;" wrapText="true"/>
+        </VBox>
+    </HBox>
+
+    <!-- 第二行 -->
+    <HBox spacing="12" style="-fx-padding:0 0 12 0;">
+        <!-- Cron -->
+        <VBox styleClass="home-card" HBox.hgrow="ALWAYS" spacing="6">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="&#9200;" style="-fx-font-size:20px;"/>
+                <Label text="Cron 表达式" style="-fx-text-fill:#e0e0e0; -fx-font-size:14px; -fx-font-weight:bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="✅" style="-fx-font-size:11px;"/>
+            </HBox>
+            <Label text="可视化配置 · 实时解析 · 下次10次触发时间 · 14个常用模板"
+                   style="-fx-text-fill:#888; -fx-font-size:11px;" wrapText="true"/>
+        </VBox>
+        <!-- 加密解密 -->
+        <VBox styleClass="home-card" HBox.hgrow="ALWAYS" spacing="6">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="&#128272;" style="-fx-font-size:20px;"/>
+                <Label text="加密解密" style="-fx-text-fill:#e0e0e0; -fx-font-size:14px; -fx-font-weight:bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="✅" style="-fx-font-size:11px;"/>
+            </HBox>
+            <Label text="MD5/SHA/HMAC实时计算 · AES-CBC/ECB · Base64 · URL编解码"
+                   style="-fx-text-fill:#888; -fx-font-size:11px;" wrapText="true"/>
+        </VBox>
+        <!-- 时间戳 -->
+        <VBox styleClass="home-card" HBox.hgrow="ALWAYS" spacing="6">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="&#9200;" style="-fx-font-size:20px;"/>
+                <Label text="时间戳工具" style="-fx-text-fill:#e0e0e0; -fx-font-size:14px; -fx-font-weight:bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="✅" style="-fx-font-size:11px;"/>
+            </HBox>
+            <Label text="实时时钟 · 时间戳↔日期转换 · 14时区显示 · 日期差计算"
+                   style="-fx-text-fill:#888; -fx-font-size:11px;" wrapText="true"/>
+        </VBox>
+    </HBox>
+
+    <!-- 第三行 -->
+    <HBox spacing="12" style="-fx-padding:0 0 12 0;">
+        <!-- SQL -->
+        <VBox styleClass="home-card" HBox.hgrow="ALWAYS" spacing="6">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="&#128452;" style="-fx-font-size:20px;"/>
+                <Label text="SQL 工具箱" style="-fx-text-fill:#e0e0e0; -fx-font-size:14px; -fx-font-weight:bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="✅" style="-fx-font-size:11px;"/>
+            </HBox>
+            <Label text="格式化 · 语法检测 · 关键字大小写 · 参数填充 · INSERT模板 · 提取元信息"
+                   style="-fx-text-fill:#888; -fx-font-size:11px;" wrapText="true"/>
+        </VBox>
+        <!-- 文本处理 -->
+        <VBox styleClass="home-card" HBox.hgrow="ALWAYS" spacing="6">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="&#128196;" style="-fx-font-size:20px;"/>
+                <Label text="文本批量处理" style="-fx-text-fill:#e0e0e0; -fx-font-size:14px; -fx-font-weight:bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="✅" style="-fx-font-size:11px;"/>
+            </HBox>
+            <Label text="批量替换(正则) · 行操作 · 大小写/snake/camel · 编码转换 · 实时统计"
+                   style="-fx-text-fill:#888; -fx-font-size:11px;" wrapText="true"/>
+        </VBox>
+        <!-- 开发日报 -->
+        <VBox styleClass="home-card" HBox.hgrow="ALWAYS" spacing="6">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="&#128202;" style="-fx-font-size:20px;"/>
+                <Label text="开发日报生成" style="-fx-text-fill:#e0e0e0; -fx-font-size:14px; -fx-font-weight:bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="✅" style="-fx-font-size:11px;"/>
+            </HBox>
+            <Label text="读取本地Git日志 · 日期范围查询 · 分天导航 · 多格式输出 · 智能摘要分类"
+                   style="-fx-text-fill:#888; -fx-font-size:11px;" wrapText="true"/>
+        </VBox>
+    </HBox>
+
+    <Region VBox.vgrow="ALWAYS"/>
+
+    <!-- ── 底部：使用提示 + 版权 ── -->
+    <HBox alignment="CENTER_LEFT" spacing="20"
+          style="-fx-background-color:#252525; -fx-border-color:#3a3a3a; -fx-border-radius:5;
+                 -fx-background-radius:5; -fx-padding:10 16;">
+        <Label text="&#128161;" style="-fx-font-size:14px;"/>
+        <Label text="点击左侧导航栏选择工具开始使用  ·  所有功能纯本地运行，数据不上传"
+               style="-fx-text-fill:#666; -fx-font-size:12px;" HBox.hgrow="ALWAYS"/>
+        <Label fx:id="copyrightLabel" text="DevToolBox  ©  2026"
+               style="-fx-text-fill:#444; -fx-font-size:11px;"/>
+    </HBox>
 
 </VBox>
-
