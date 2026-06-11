@@ -18,9 +18,6 @@
                style="-fx-text-fill:#4a6fa5; -fx-font-size:12px; -fx-padding:0 0 0 8;"/>
     </HBox>
 
-    <!-- ══════════════════════════════════════════════
-         主体：左侧配置 + 右侧结果
-    ══════════════════════════════════════════════ -->
     <HBox spacing="12" VBox.vgrow="ALWAYS">
 
         <!-- ══ 左侧：配置区 ══ -->
@@ -33,44 +30,66 @@
                     <Label text="Git 仓库路径（每行一个）"
                            style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
                     <Region HBox.hgrow="ALWAYS"/>
-                    <Button text="📂 浏览" styleClass="json-action-btn" onAction="#onBrowseRepo"/>
+                    <Button text="&#128194; 浏览" styleClass="json-action-btn" onAction="#onBrowseRepo"/>
                     <Button text="检测" styleClass="json-action-btn" onAction="#onCheckRepos"/>
                 </HBox>
-                <TextArea fx:id="repoPathsArea" prefHeight="100"
+                <TextArea fx:id="repoPathsArea" prefHeight="90"
                           styleClass="json-text-area"
-                          promptText="# 每行一个仓库路径，# 开头为注释&#10;E:\projects\my-service&#10;E:\projects\my-frontend"/>
+                          promptText="# 每行一个仓库路径，# 开头为注释&#10;E:\projects\my-service"/>
                 <Label text="支持多个仓库，# 开头行为注释"
                        style="-fx-text-fill:#555; -fx-font-size:11px;"/>
             </VBox>
 
-            <!-- 仓库信息预览（检测后显示） -->
+            <!-- 仓库信息预览 -->
             <VBox fx:id="repoInfoPane" spacing="4" managed="false" visible="false"
                   style="-fx-background-color:#1e1e1e; -fx-border-color:#3a5a3a; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:10;">
                 <Label text="仓库检测结果" style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
-                <ListView fx:id="repoInfoList" prefHeight="80"
+                <ListView fx:id="repoInfoList" prefHeight="70"
                           style="-fx-background-color:#1e1e1e; -fx-control-inner-background:#1e1e1e;
                                  -fx-font-family:'Consolas',monospace; -fx-font-size:12px;
                                  -fx-border-color:transparent;"/>
             </VBox>
 
-            <!-- 作者 & 日期 -->
+            <!-- 作者 & 日期范围 -->
             <VBox spacing="8"
                   style="-fx-background-color:#313335; -fx-border-color:#444; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:14;">
                 <HBox spacing="8" alignment="CENTER_LEFT">
-                    <Label text="作者名:" style="-fx-text-fill:#ccc; -fx-font-size:13px; -fx-min-width:72;"/>
+                    <Label text="作者名:" style="-fx-text-fill:#ccc; -fx-font-size:13px; -fx-min-width:70;"/>
                     <TextField fx:id="authorField" HBox.hgrow="ALWAYS"
                                promptText="git 提交作者名（留空=全部）"
                                style="-fx-font-size:13px;"/>
                 </HBox>
+
+                <!-- 开始日期 -->
                 <HBox spacing="8" alignment="CENTER_LEFT">
-                    <Label text="日期:" style="-fx-text-fill:#ccc; -fx-font-size:13px; -fx-min-width:72;"/>
-                    <TextField fx:id="dateField" prefWidth="130"
+                    <Label text="开始日期:" style="-fx-text-fill:#ccc; -fx-font-size:13px; -fx-min-width:70;"/>
+                    <TextField fx:id="startDateField" prefWidth="115"
                                style="-fx-font-family:'Consolas',monospace; -fx-font-size:13px;"/>
-                    <Button text="今天" styleClass="json-action-btn" onAction="#onFillToday"/>
-                    <Button text="昨天" styleClass="json-action-btn" onAction="#onFillYesterday"/>
                 </HBox>
+                <!-- 结束日期 -->
                 <HBox spacing="8" alignment="CENTER_LEFT">
-                    <Label text="分支:" style="-fx-text-fill:#ccc; -fx-font-size:13px; -fx-min-width:72;"/>
+                    <Label text="结束日期:" style="-fx-text-fill:#ccc; -fx-font-size:13px; -fx-min-width:70;"/>
+                    <TextField fx:id="endDateField" prefWidth="115"
+                               style="-fx-font-family:'Consolas',monospace; -fx-font-size:13px;"/>
+                </HBox>
+
+                <!-- 快捷日期按钮 -->
+                <HBox spacing="6" alignment="CENTER_LEFT" style="-fx-padding:2 0 0 0;">
+                    <Label text="快捷:" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+                    <Button text="今天"  styleClass="json-action-btn" onAction="#onFillToday"
+                            style="-fx-font-size:11px; -fx-padding:3 8;"/>
+                    <Button text="昨天"  styleClass="json-action-btn" onAction="#onFillYesterday"
+                            style="-fx-font-size:11px; -fx-padding:3 8;"/>
+                    <Button text="本周"  styleClass="json-action-btn" onAction="#onFillThisWeek"
+                            style="-fx-font-size:11px; -fx-padding:3 8;"/>
+                    <Button text="上周"  styleClass="json-action-btn" onAction="#onFillLastWeek"
+                            style="-fx-font-size:11px; -fx-padding:3 8;"/>
+                    <Button text="本月"  styleClass="json-action-btn" onAction="#onFillThisMonth"
+                            style="-fx-font-size:11px; -fx-padding:3 8;"/>
+                </HBox>
+
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="分支:" style="-fx-text-fill:#ccc; -fx-font-size:13px; -fx-min-width:70;"/>
                     <TextField fx:id="branchField" HBox.hgrow="ALWAYS"
                                promptText="留空=所有分支（--all）"
                                style="-fx-font-size:13px;"/>
@@ -91,13 +110,13 @@
                     <Label text="最多显示文件:" style="-fx-text-fill:#aaa; -fx-font-size:12px;"/>
                     <Spinner fx:id="maxFilesSpinner" min="1" max="20" initialValue="5" prefWidth="65"
                              style="-fx-font-size:12px;"/>
-                    <Label text="个/次提交" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+                    <Label text="个/提交" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
                 </HBox>
             </VBox>
 
             <!-- 生成按钮 -->
             <VBox spacing="6">
-                <Button fx:id="btnGenerate" text="🚀  生成日报" onAction="#onGenerate"
+                <Button fx:id="btnGenerate" text="&#128640;  生成日报" onAction="#onGenerate"
                         maxWidth="Infinity" styleClass="button-primary"
                         style="-fx-font-size:15px; -fx-font-weight:bold; -fx-padding:10 0;
                                -fx-border-radius:4; -fx-background-radius:4; -fx-cursor:hand;"/>
@@ -115,18 +134,32 @@
 
             <!-- 结果 Tab 切换 -->
             <HBox spacing="6">
-                <Button fx:id="tabReport"  text="📄 日报全文"    onAction="#onTabReport"  styleClass="json-tab,json-tab-active"/>
-                <Button fx:id="tabSummary" text="✅ 今日工作摘要" onAction="#onTabSummary" styleClass="json-tab"/>
+                <Button fx:id="tabReport"  text="&#128196; 日报全文"     onAction="#onTabReport"  styleClass="json-tab,json-tab-active"/>
+                <Button fx:id="tabSummary" text="&#9989; 工作摘要" onAction="#onTabSummary" styleClass="json-tab"/>
             </HBox>
 
-            <!-- 统计信息条 -->
+            <!-- 统计信息条 + 清空 -->
             <VBox fx:id="resultPane" spacing="8" VBox.vgrow="ALWAYS" managed="false" visible="false">
-                <HBox alignment="CENTER_LEFT" spacing="12"
-                      style="-fx-background-color:#1a2a1a; -fx-border-color:#3a5a3a; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:8 14;">
-                    <Label text="📊" style="-fx-font-size:14px;"/>
+                <HBox alignment="CENTER_LEFT" spacing="10"
+                      style="-fx-background-color:#1a2a1a; -fx-border-color:#3a5a3a; -fx-border-radius:5; -fx-background-radius:5; -fx-padding:8 12;">
+                    <Label text="&#128202;" style="-fx-font-size:14px;"/>
                     <Label fx:id="statsLabel" text=""
                            style="-fx-text-fill:#98c379; -fx-font-size:12px;" HBox.hgrow="ALWAYS"/>
                     <Button text="清空" styleClass="json-action-btn" onAction="#onClearResult"/>
+                </HBox>
+
+                <!-- 分天导航栏（多天时显示） -->
+                <HBox fx:id="dayNavBar" spacing="8" alignment="CENTER_LEFT"
+                      managed="false" visible="false"
+                      style="-fx-background-color:#2a2a3a; -fx-border-color:#4a4a6a; -fx-border-radius:5;
+                             -fx-background-radius:5; -fx-padding:8 12;">
+                    <Label text="&#128197; 查看:" style="-fx-text-fill:#aaa; -fx-font-size:12px;"/>
+                    <ComboBox fx:id="dayNavCombo" prefWidth="260" style="-fx-font-size:12px;"/>
+                    <Label fx:id="dayNavHint" text="" style="-fx-text-fill:#666; -fx-font-size:11px;" HBox.hgrow="ALWAYS"/>
+                    <Button text="&#128203; 复制当前" styleClass="json-action-btn" onAction="#onCopyReport"
+                            style="-fx-font-size:11px; -fx-padding:3 10;"/>
+                    <Button text="&#128462; 复制全部天" styleClass="button-primary" onAction="#onCopyAllDays"
+                            style="-fx-font-size:11px; -fx-padding:3 10; -fx-border-radius:3; -fx-background-radius:3;"/>
                 </HBox>
 
                 <!-- 日报全文 Tab -->
@@ -147,13 +180,13 @@
                 <!-- 工作摘要 Tab -->
                 <VBox fx:id="summaryTabPane" spacing="6" VBox.vgrow="ALWAYS" managed="false" visible="false">
                     <HBox alignment="CENTER_LEFT" spacing="8">
-                        <Label text="今日工作内容摘要（可直接编辑后复制）"
+                        <Label text="工作内容摘要（可直接编辑后复制）"
                                style="-fx-text-fill:#888; -fx-font-size:11px; -fx-font-weight:bold;"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <Button text="一键复制" styleClass="button-primary" onAction="#onCopySummary"
                                 style="-fx-font-size:12px; -fx-padding:4 14; -fx-border-radius:3; -fx-background-radius:3;"/>
                     </HBox>
-                    <Label text="已按提交类型（feat/fix/refactor...）自动分类，可手动调整后复制粘贴到日报"
+                    <Label text="已按提交类型（feat/fix/refactor...）自动分类，可手动调整"
                            style="-fx-text-fill:#555; -fx-font-size:11px;"/>
                     <TextArea fx:id="summaryOutputArea" VBox.vgrow="ALWAYS"
                               styleClass="json-text-area"
@@ -163,24 +196,26 @@
                 </VBox>
             </VBox>
 
-            <!-- 空状态提示（未生成时显示，生成后隐藏由Controller控制） -->
+            <!-- 空状态提示 -->
             <VBox fx:id="emptyHintPane" alignment="CENTER" VBox.vgrow="ALWAYS" spacing="16"
                   style="-fx-background-color:#1e1e1e; -fx-border-color:#333; -fx-border-radius:5; -fx-background-radius:5;">
-                <Label text="📋" style="-fx-font-size:48px; -fx-opacity:0.3;"/>
+                <Label text="&#128203;" style="-fx-font-size:48px; -fx-opacity:0.3;"/>
                 <Label text="填写左侧配置后点击「生成日报」"
                        style="-fx-text-fill:#444; -fx-font-size:14px;"/>
-                <VBox spacing="6" style="-fx-padding:0 40;">
-                    <Label text="💡 使用说明："
+                <VBox spacing="5" style="-fx-padding:0 40;">
+                    <Label text="&#128161; 使用说明："
                            style="-fx-text-fill:#555; -fx-font-size:12px; -fx-font-weight:bold;"/>
-                    <Label text="1. 填写本地 Git 仓库目录路径（支持多个）"
+                    <Label text="1. 填写本地 Git 仓库路径（支持多个）"
                            style="-fx-text-fill:#444; -fx-font-size:12px;"/>
-                    <Label text="2. 填写 git 提交作者名（与 git log 中的 Author 一致）"
+                    <Label text="2. 填写 git 提交作者名（空=全部）"
                            style="-fx-text-fill:#444; -fx-font-size:12px;"/>
-                    <Label text="3. 选择日期（默认今天），点击生成"
+                    <Label text="3. 设置日期范围（今天/昨天/本周/上周/本月 一键填入）"
                            style="-fx-text-fill:#444; -fx-font-size:12px;"/>
-                    <Label text="4. 生成的日报可直接编辑，然后一键复制发送"
+                    <Label text="4. 多天时可通过日期导航查看每天的独立日报"
                            style="-fx-text-fill:#444; -fx-font-size:12px;"/>
-                    <Label text="5. 工作摘要按 feat/fix/refactor 等自动分类整理"
+                    <Label text="5. 支持「复制当前天」或「复制全部天」"
+                           style="-fx-text-fill:#444; -fx-font-size:12px;"/>
+                    <Label text="6. 工作摘要按 feat/fix/refactor 自动分类"
                            style="-fx-text-fill:#444; -fx-font-size:12px;"/>
                 </VBox>
             </VBox>
@@ -189,4 +224,3 @@
     </HBox>
 
 </VBox>
-

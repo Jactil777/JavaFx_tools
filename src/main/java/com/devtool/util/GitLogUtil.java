@@ -43,11 +43,43 @@ public class GitLogUtil {
     public record DailyReportConfig(
         List<String> repoPaths,  // 仓库路径列表
         String author,           // git 作者名（支持模糊匹配）
-        LocalDate date,          // 日期（默认今天）
+        LocalDate date,          // 单日模式：日期（dateRange=false时使用）
         String branch,           // 分支（空=所有分支）
         boolean includeFiles,    // 是否显示变更文件
         int maxFiles             // 每次提交最多显示多少个文件
     ) {}
+
+    /** 日期范围配置（扩展字段，date=startDate, endDate 为结束） */
+    public record RangeReportConfig(
+        List<String> repoPaths,
+        String author,
+        LocalDate startDate,
+        LocalDate endDate,
+        String branch,
+        boolean includeFiles,
+        int maxFiles
+    ) {
+        /** 日期范围内每天的列表（含首尾） */
+        public List<LocalDate> dates() {
+            List<LocalDate> list = new ArrayList<>();
+            LocalDate d = startDate;
+            while (!d.isAfter(endDate)) { list.add(d); d = d.plusDays(1); }
+            return list;
+        }
+        /** 转为单日 DailyReportConfig */
+        public DailyReportConfig forDate(LocalDate date) {
+            return new DailyReportConfig(repoPaths, author, date, branch, includeFiles, maxFiles);
+        }
+    }
+
+    /** 按日期范围拉取每天的提交结果，key=日期，value=各仓库结果 */
+    public static java.util.LinkedHashMap<LocalDate, List<RepoResult>> fetchByRange(RangeReportConfig config) {
+        java.util.LinkedHashMap<LocalDate, List<RepoResult>> map = new java.util.LinkedHashMap<>();
+        for (LocalDate date : config.dates()) {
+            map.put(date, fetchAll(config.forDate(date)));
+        }
+        return map;
+    }
 
     // ─── 核心：拉取 Git 日志 ───────────────────────────────────────────────
 
@@ -443,6 +475,224 @@ public class GitLogUtil {
         sb.append("---\n");
         sb.append("✅ **今日合计 ").append(totalCommits).append(" 次提交**");
         return sb.toString();
+    }
+
+    // ─── 多日汇总报告生成 ──────────────────────────────────────────────────
+
+    /**
+     * 生成多日汇总报告：每天一节，末尾附总统计
+     */
+    public static String generateRangeReport(
+            java.util.LinkedHashMap<LocalDate, List<RepoResult>> dailyMap,
+            RangeReportConfig config,
+            ReportFormat format) {
+        if (dailyMap.size() == 1) {
+            // 只有一天，直接用原有单日生成
+            Map.Entry<LocalDate, List<RepoResult>> entry = dailyMap.entrySet().iterator().next();
+            return generateReport(entry.getValue(), config.forDate(entry.getKey()), format);
+        }
+        return switch (format) {
+            case MARKDOWN  -> buildRangeMarkdown(dailyMap, config);
+            case DINGTALK  -> buildRangeDingTalk(dailyMap, config);
+            case FEISHU    -> buildRangeFeiShu(dailyMap, config);
+            default        -> buildRangePlainText(dailyMap, config);
+        };
+    }
+
+    private static String buildRangePlainText(
+            java.util.LinkedHashMap<LocalDate, List<RepoResult>> dailyMap,
+            RangeReportConfig config) {
+        StringBuilder sb = new StringBuilder();
+        String author = config.author().isBlank() ? "所有人" : config.author();
+        String range  = config.startDate().format(DateTimeFormatter.ofPattern("MM月dd日"))
+                      + " ~ " + config.endDate().format(DateTimeFormatter.ofPattern("MM月dd日"));
+
+        sb.append("========================================\n");
+        sb.append("  开发周报 / 区间日报 ").append(range).append("\n");
+        sb.append("  开发人员：").append(author).append("\n");
+        sb.append("========================================\n\n");
+
+        int grandTotal = 0;
+        for (Map.Entry<LocalDate, List<RepoResult>> entry : dailyMap.entrySet()) {
+            LocalDate date = entry.getKey();
+            List<RepoResult> results = entry.getValue();
+            int dayTotal = results.stream().mapToInt(r -> r.commits() == null ? 0 : r.commits().size()).sum();
+            grandTotal += dayTotal;
+
+            sb.append("【").append(date.format(DateTimeFormatter.ofPattern("MM-dd"))).append(" 共 ")
+              .append(dayTotal).append(" 次提交】\n");
+            if (dayTotal == 0) {
+                sb.append("  当日无提交\n\n");
+                continue;
+            }
+            for (RepoResult repo : results) {
+                if (repo.commits().isEmpty()) continue;
+                sb.append("  ").append(repo.repoName()).append("：\n");
+                for (Commit c : repo.commits()) {
+                    sb.append("    [").append(c.datetime(), 11, 16).append("] ")
+                      .append(c.hash()).append("  ").append(c.message()).append("\n");
+                    if (config.includeFiles() && !c.changedFiles().isEmpty()) {
+                        int limit = config.maxFiles() > 0 ? config.maxFiles() : 5;
+                        c.changedFiles().stream().limit(limit)
+                         .forEach(f -> sb.append("      ").append(f).append("\n"));
+                    }
+                }
+            }
+            sb.append("\n");
+        }
+        sb.append("========================================\n");
+        sb.append("  区间合计：").append(grandTotal).append(" 次提交  /  ")
+          .append(dailyMap.size()).append(" 天\n");
+        sb.append("========================================\n");
+        return sb.toString();
+    }
+
+    private static String buildRangeMarkdown(
+            java.util.LinkedHashMap<LocalDate, List<RepoResult>> dailyMap,
+            RangeReportConfig config) {
+        StringBuilder sb = new StringBuilder();
+        String author = config.author().isBlank() ? "全体" : config.author();
+        String range  = config.startDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                      + " ~ " + config.endDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        sb.append("# 开发日报 · ").append(range).append("\n\n");
+        sb.append("> **开发人员：** ").append(author).append("  \n");
+        sb.append("> **生成时间：** ").append(java.time.LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))).append("\n\n");
+        sb.append("---\n\n");
+
+        int grandTotal = 0;
+        for (Map.Entry<LocalDate, List<RepoResult>> entry : dailyMap.entrySet()) {
+            LocalDate date = entry.getKey();
+            List<RepoResult> results = entry.getValue();
+            int dayTotal = results.stream().mapToInt(r -> r.commits() == null ? 0 : r.commits().size()).sum();
+            grandTotal += dayTotal;
+
+            sb.append("## ").append(date.format(DateTimeFormatter.ofPattern("MM月dd日")))
+              .append("（").append(date.getDayOfWeek().getDisplayName(
+                      java.time.format.TextStyle.FULL, java.util.Locale.CHINESE)).append("）");
+            if (dayTotal == 0) { sb.append("  *无提交*\n\n"); continue; }
+            sb.append("  — ").append(dayTotal).append(" 次提交\n\n");
+
+            for (RepoResult repo : results) {
+                if (repo.error() != null) {
+                    sb.append("> ⚠️ ").append(repo.repoName()).append("：").append(repo.error()).append("\n\n");
+                    continue;
+                }
+                if (repo.commits().isEmpty()) continue;
+                sb.append("**").append(repo.repoName()).append("**\n\n");
+                for (Commit c : repo.commits()) {
+                    sb.append("- **[").append(c.datetime(), 11, 16).append("]**  `")
+                      .append(c.hash()).append("`  ").append(c.message()).append("\n");
+                    if (!c.body().isBlank()) {
+                        for (String line : c.body().split("\n"))
+                            if (!line.isBlank()) sb.append("  > ").append(line.trim()).append("\n");
+                    }
+                    if (config.includeFiles() && !c.changedFiles().isEmpty()) {
+                        int limit = config.maxFiles() > 0 ? config.maxFiles() : 5;
+                        sb.append("\n  <details><summary>变更文件（")
+                          .append(c.changedFiles().size()).append(" 个）</summary>\n\n");
+                        c.changedFiles().stream().limit(limit)
+                         .forEach(f -> sb.append("  - `").append(f).append("`\n"));
+                        if (c.changedFiles().size() > limit)
+                            sb.append("  - *...还有 ").append(c.changedFiles().size() - limit).append(" 个*\n");
+                        sb.append("  </details>\n");
+                    }
+                }
+                sb.append("\n");
+            }
+        }
+        sb.append("---\n\n");
+        sb.append("**区间合计：** ").append(grandTotal).append(" 次提交 / ")
+          .append(dailyMap.size()).append(" 天\n");
+        return sb.toString();
+    }
+
+    private static String buildRangeDingTalk(
+            java.util.LinkedHashMap<LocalDate, List<RepoResult>> dailyMap,
+            RangeReportConfig config) {
+        StringBuilder sb = new StringBuilder();
+        String author = config.author().isBlank() ? "全体" : config.author();
+        String range  = config.startDate().format(DateTimeFormatter.ofPattern("MM.dd"))
+                      + "-" + config.endDate().format(DateTimeFormatter.ofPattern("MM.dd"));
+
+        sb.append("【开发日报】").append(range).append(" ").append(author).append("\n\n");
+        int grandTotal = 0;
+        for (Map.Entry<LocalDate, List<RepoResult>> entry : dailyMap.entrySet()) {
+            LocalDate date = entry.getKey();
+            List<RepoResult> results = entry.getValue();
+            int dayTotal = results.stream().mapToInt(r -> r.commits() == null ? 0 : r.commits().size()).sum();
+            grandTotal += dayTotal;
+            if (dayTotal == 0) continue;
+            sb.append("📅 **").append(date.format(DateTimeFormatter.ofPattern("MM-dd")))
+              .append("**（").append(dayTotal).append("次）\n");
+            for (RepoResult repo : results) {
+                if (repo.commits().isEmpty()) continue;
+                for (Commit c : repo.commits()) {
+                    sb.append("  ▸ [").append(repo.repoName()).append("] ")
+                      .append(c.message()).append("\n");
+                }
+            }
+            sb.append("\n");
+        }
+        sb.append("────────────────\n");
+        sb.append("📊 合计：").append(grandTotal).append(" 次提交 / ").append(dailyMap.size()).append(" 天");
+        return sb.toString();
+    }
+
+    private static String buildRangeFeiShu(
+            java.util.LinkedHashMap<LocalDate, List<RepoResult>> dailyMap,
+            RangeReportConfig config) {
+        StringBuilder sb = new StringBuilder();
+        String author = config.author().isBlank() ? "全体" : config.author();
+        String range  = config.startDate().format(DateTimeFormatter.ofPattern("MM-dd"))
+                      + " 至 " + config.endDate().format(DateTimeFormatter.ofPattern("MM-dd"));
+        sb.append("**📅 开发日报 ").append(range).append("**\n");
+        sb.append("👤 ").append(author).append("\n\n");
+        int grandTotal = 0;
+        for (Map.Entry<LocalDate, List<RepoResult>> entry : dailyMap.entrySet()) {
+            LocalDate date = entry.getKey();
+            List<RepoResult> results = entry.getValue();
+            int dayTotal = results.stream().mapToInt(r -> r.commits() == null ? 0 : r.commits().size()).sum();
+            grandTotal += dayTotal;
+            if (dayTotal == 0) continue;
+            sb.append("**").append(date.format(DateTimeFormatter.ofPattern("MM月dd日"))).append("**\n");
+            for (RepoResult repo : results) {
+                if (repo.commits().isEmpty()) continue;
+                sb.append("📂 ").append(repo.repoName()).append("\n");
+                for (Commit c : repo.commits()) {
+                    sb.append("- `").append(c.hash()).append("` ")
+                      .append(c.message()).append("\n");
+                }
+            }
+            sb.append("\n");
+        }
+        sb.append("---\n");
+        sb.append("✅ **合计 ").append(grandTotal).append(" 次提交 / ").append(dailyMap.size()).append(" 天**");
+        return sb.toString();
+    }
+
+    /**
+     * 从多日结果中提取按天分类的工作摘要
+     */
+    public static String extractRangeWorkSummary(java.util.LinkedHashMap<LocalDate, List<RepoResult>> dailyMap) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("区间工作内容摘要：\n\n");
+        for (Map.Entry<LocalDate, List<RepoResult>> entry : dailyMap.entrySet()) {
+            LocalDate date = entry.getKey();
+            List<RepoResult> results = entry.getValue();
+            int total = results.stream().mapToInt(r -> r.commits() == null ? 0 : r.commits().size()).sum();
+            if (total == 0) continue;
+            sb.append("【").append(date.format(DateTimeFormatter.ofPattern("MM-dd")))
+              .append("  共 ").append(total).append(" 次提交】\n");
+            String daySummary = extractWorkSummary(results);
+            // 缩进
+            for (String line : daySummary.split("\n")) {
+                if (!line.isBlank()) sb.append("  ").append(line).append("\n");
+            }
+            sb.append("\n");
+        }
+        return sb.toString().trim();
     }
 
     // ─── 工作内容智能提取 ─────────────────────────────────────────────────
