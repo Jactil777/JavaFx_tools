@@ -9,7 +9,7 @@ public class AppConfig {
 
     // 应用基础信息
     public static final String APP_NAME    = "DevToolBox 开发者工具箱";
-    public static final String APP_VERSION = "1.0.9";
+    public static final String APP_VERSION = "1.0.10";
     public static final String APP_AUTHOR  = "DevToolBox";
 
     // 主窗口尺寸

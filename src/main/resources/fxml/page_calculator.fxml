@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.devtool.controller.CalculatorPageController"
+      styleClass="page-container"
+      spacing="10"
+      style="-fx-padding: 16;">
+
+    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 6 0;">
+        <Label text="🧮" style="-fx-font-size: 20px;"/>
+        <Label text="计算器" styleClass="title-label" style="-fx-font-size: 20px;"/>
+        <Label text="完整计算过程 · 可复制结果/历史 · 支持键盘输入"
+               style="-fx-text-fill:#888; -fx-font-size:12px;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="复制结果" styleClass="json-action-btn" onAction="#onCopyResult"/>
+    </HBox>
+
+    <SplitPane dividerPositions="0.62" VBox.vgrow="ALWAYS">
+
+        <VBox spacing="10" style="-fx-padding: 0 10 0 0;">
+            <VBox styleClass="calc-display" spacing="8">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label fx:id="memoryLabel" text="" styleClass="calc-memory-indicator"/>
+                    <Label text="表达式" style="-fx-text-fill:#888; -fx-font-size:12px; -fx-font-weight:bold;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="CE" styleClass="calc-btn, calc-btn-fn" onAction="#onKeypad" userData="CE"/>
+                    <Button text="AC" styleClass="calc-btn, calc-btn-fn" onAction="#onKeypad" userData="AC"/>
+                </HBox>
+                <TextField fx:id="expressionField" promptText="例如：(1+2)*3-4/5  或  sqrt(9)+2^3"
+                           styleClass="calc-expression-field"/>
+                <HBox alignment="CENTER_RIGHT">
+                    <Label fx:id="resultLabel" text="0" styleClass="calc-result-label"/>
+                </HBox>
+                <Label fx:id="statusLabel" text="就绪" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+            </VBox>
+
+            <GridPane hgap="8" vgap="8" style="-fx-padding: 6 0 0 0;">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="20"/>
+                    <ColumnConstraints percentWidth="20"/>
+                    <ColumnConstraints percentWidth="20"/>
+                    <ColumnConstraints percentWidth="20"/>
+                    <ColumnConstraints percentWidth="20"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints vgrow="NEVER"/>
+                    <RowConstraints vgrow="NEVER"/>
+                    <RowConstraints vgrow="NEVER"/>
+                    <RowConstraints vgrow="NEVER"/>
+                    <RowConstraints vgrow="NEVER"/>
+                    <RowConstraints vgrow="NEVER"/>
+                </rowConstraints>
+
+                <Button text="MC" styleClass="calc-btn, calc-btn-fn" onAction="#onKeypad" userData="MC" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <Button text="MR" styleClass="calc-btn, calc-btn-fn" onAction="#onKeypad" userData="MR" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <Button text="M+" styleClass="calc-btn, calc-btn-fn" onAction="#onKeypad" userData="M+" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                <Button text="M-" styleClass="calc-btn, calc-btn-fn" onAction="#onKeypad" userData="M-" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+                <Button text="⌫" styleClass="calc-btn, calc-btn-fn" onAction="#onKeypad" userData="BKSP" GridPane.rowIndex="0" GridPane.columnIndex="4"/>
+
+                <Button text="(" styleClass="calc-btn" onAction="#onKeypad" userData="(" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <Button text=")" styleClass="calc-btn" onAction="#onKeypad" userData=")" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <Button fx:id="btnPercent" styleClass="calc-btn" onAction="#onKeypad" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                <Button text="π" styleClass="calc-btn" onAction="#onKeypad" userData="pi" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+                <Button text="÷" styleClass="calc-btn, calc-btn-op" onAction="#onKeypad" userData="÷" GridPane.rowIndex="1" GridPane.columnIndex="4"/>
+
+                <Button text="7" styleClass="calc-btn" onAction="#onKeypad" userData="7" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <Button text="8" styleClass="calc-btn" onAction="#onKeypad" userData="8" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <Button text="9" styleClass="calc-btn" onAction="#onKeypad" userData="9" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+                <Button text="√" styleClass="calc-btn, calc-btn-fn" onAction="#onKeypad" userData="√" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
+                <Button text="×" styleClass="calc-btn, calc-btn-op" onAction="#onKeypad" userData="×" GridPane.rowIndex="2" GridPane.columnIndex="4"/>
+
+                <Button text="4" styleClass="calc-btn" onAction="#onKeypad" userData="4" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <Button text="5" styleClass="calc-btn" onAction="#onKeypad" userData="5" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                <Button text="6" styleClass="calc-btn" onAction="#onKeypad" userData="6" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
+                <Button text="x²" styleClass="calc-btn, calc-btn-fn" onAction="#onKeypad" userData="x²" GridPane.rowIndex="3" GridPane.columnIndex="3"/>
+                <Button text="-" styleClass="calc-btn, calc-btn-op" onAction="#onKeypad" userData="-" GridPane.rowIndex="3" GridPane.columnIndex="4"/>
+
+                <Button text="1" styleClass="calc-btn" onAction="#onKeypad" userData="1" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <Button text="2" styleClass="calc-btn" onAction="#onKeypad" userData="2" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                <Button text="3" styleClass="calc-btn" onAction="#onKeypad" userData="3" GridPane.rowIndex="4" GridPane.columnIndex="2"/>
+                <Button text="1/x" styleClass="calc-btn, calc-btn-fn" onAction="#onKeypad" userData="1/x" GridPane.rowIndex="4" GridPane.columnIndex="3"/>
+                <Button text="+" styleClass="calc-btn, calc-btn-op" onAction="#onKeypad" userData="+" GridPane.rowIndex="4" GridPane.columnIndex="4"/>
+
+                <Button text="+/-" styleClass="calc-btn, calc-btn-fn" onAction="#onKeypad" userData="+/-" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                <Button text="0" styleClass="calc-btn" onAction="#onKeypad" userData="0" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                <Button text="." styleClass="calc-btn" onAction="#onKeypad" userData="." GridPane.rowIndex="5" GridPane.columnIndex="2"/>
+                <Button text="^" styleClass="calc-btn, calc-btn-fn" onAction="#onKeypad" userData="^" GridPane.rowIndex="5" GridPane.columnIndex="3"/>
+                <Button text="=" styleClass="calc-btn, calc-btn-eq" onAction="#onKeypad" userData="EVAL" GridPane.rowIndex="5" GridPane.columnIndex="4"/>
+            </GridPane>
+
+            <Label text="快捷键：Enter 计算 · Ctrl+C 复制结果 · Ctrl+L 清空 · Esc 清空输入"
+                   style="-fx-text-fill:#555; -fx-font-size:11px; -fx-padding: 4 0 0 0;"/>
+        </VBox>
+
+        <VBox spacing="8" style="-fx-padding: 0 0 0 10;">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="历史" style="-fx-text-fill:#888; -fx-font-size:12px; -fx-font-weight:bold;"/>
+                <CheckBox fx:id="autoScrollCheck" text="自动滚动" selected="true"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="复制全部" styleClass="json-action-btn" onAction="#onCopyAllHistory"/>
+                <Button text="清空历史" styleClass="json-action-btn" onAction="#onClearHistory"/>
+            </HBox>
+            <ListView fx:id="historyList" VBox.vgrow="ALWAYS"/>
+            <Label text="右键历史：复制整行/表达式/结果；双击：加载表达式"
+                   style="-fx-text-fill:#555; -fx-font-size:11px;"/>
+        </VBox>
+    </SplitPane>
+</VBox>
+

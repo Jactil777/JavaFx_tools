@@ -17,10 +17,10 @@
             <Label fx:id="titleLabel" text="DevToolBox 开发者工具箱" styleClass="title-label"
                    style="-fx-font-size:26px;"/>
             <HBox spacing="12" alignment="CENTER_LEFT">
-                <Label fx:id="versionLabel" text="v1.0.8" styleClass="version-label"
+                <Label fx:id="versionLabel" text="v1.0.10" styleClass="version-label"
                        style="-fx-font-size:13px; -fx-background-color:#2a3a2a; -fx-text-fill:#98c379;
                               -fx-padding:2 10; -fx-border-radius:10; -fx-background-radius:10;"/>
-                <Label text="Java 17 + JavaFX 17  ·  纯本地运算，无网络请求"
+                <Label text="Java 17 + JavaFX 17  ·  纯本地运算，部分功能需联网" 
                        style="-fx-text-fill:#555; -fx-font-size:12px;"/>
             </HBox>
         </VBox>
@@ -163,7 +163,33 @@
             <Label text="内置浏览器 · 深色主题注入 · Ctrl+W 一键 Boss 键切换掩护代码界面"
                    style="-fx-text-fill:#888; -fx-font-size:11px;" wrapText="true"/>
         </VBox>
-        <!-- 占位 -->
+        <VBox styleClass="home-card" HBox.hgrow="ALWAYS" spacing="6">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="&#129512;" style="-fx-font-size:20px;"/>
+                <Label text="计算器" style="-fx-text-fill:#e0e0e0; -fx-font-size:14px; -fx-font-weight:bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="✅" style="-fx-font-size:11px;"/>
+            </HBox>
+            <Label text="完整计算过程历史 · 结果/表达式/整行一键复制 · 支持括号/幂/√/键盘快捷键"
+                   style="-fx-text-fill:#888; -fx-font-size:11px;" wrapText="true"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <!-- 第五行 -->
+    <HBox spacing="12" style="-fx-padding:0 0 12 0;">
+        <!-- 翻译助手 -->
+        <VBox styleClass="home-card" HBox.hgrow="ALWAYS" spacing="6">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="&#128218;" style="-fx-font-size:20px;"/>
+                <Label text="翻译助手" style="-fx-text-fill:#e0e0e0; -fx-font-size:14px; -fx-font-weight:bold;"/>
+                <Label text="（多语言）" style="-fx-text-fill:#4a6fa5; -fx-font-size:11px;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="✅" style="-fx-font-size:11px;"/>
+            </HBox>
+            <Label text="12种语言互译 · 英文单词释义/音标/变形 · 生词本本地存储 · 支持自动检测语言"
+                   style="-fx-text-fill:#888; -fx-font-size:11px;" wrapText="true"/>
+        </VBox>
         <Region HBox.hgrow="ALWAYS"/>
         <Region HBox.hgrow="ALWAYS"/>
     </HBox>

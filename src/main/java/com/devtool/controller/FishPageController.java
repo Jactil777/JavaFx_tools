@@ -32,10 +32,10 @@ public class FishPageController extends BaseController {
     @FXML private ProgressBar   loadProgress;
     @FXML private StackPane     browserContainer;   // WebView 父容器
     @FXML private VBox          bossPane;           // Boss键假界面
-    @FXML private VBox          browserPane;        // 正常浏览器区域
     @FXML private ComboBox<String> quickLinkCombo;  // 快捷网址
     @FXML private CheckBox      chkDarkInject;      // 深色注入开关
     @FXML private Slider        zoomSlider;         // 缩放
+    @FXML private Label         zoomLabel;          // 缩放百分比显示
 
     // ─── 状态 ─────────────────────────────────────────────────────────────
     private WebView  webView;
@@ -167,6 +167,11 @@ public class UserServiceImpl implements UserService {
 
         // 缩放滑块默认1.0
         zoomSlider.setValue(1.0);
+        // 缩放百分比标签实时更新
+        zoomSlider.valueProperty().addListener((obs, o, n) -> {
+            if (zoomLabel != null)
+                zoomLabel.setText((int)(n.doubleValue() * 100) + "%");
+        });
     }
 
     private void initWebView() {
@@ -219,10 +224,9 @@ public class UserServiceImpl implements UserService {
 
         // 设置 WebView 背景（尽量深色）
         webView.setStyle("-fx-background-color:#2b2b2b;");
-        webView.setPrefHeight(Double.MAX_VALUE);
 
-        // 注入到容器
-        browserPane.getChildren().add(0, webView);
+        // 注入到 StackPane 容器（直接管理，避免 VBox 布局异常）
+        browserContainer.getChildren().add(0, webView);
 
         // 默认加载页面
         navigate("https://juejin.cn");
@@ -244,6 +248,7 @@ public class UserServiceImpl implements UserService {
     // ─── 导航操作 ─────────────────────────────────────────────────────────
 
     @FXML private void onGo() {
+        if (engine == null) return;
         String url = urlField.getText().trim();
         if (url.isEmpty()) return;
         navigate(url);
@@ -286,9 +291,9 @@ public class UserServiceImpl implements UserService {
 
     @FXML public void toggleBossMode() {
         bossMode = !bossMode;
-        browserPane.setVisible(!bossMode); browserPane.setManaged(!bossMode);
+        webView.setVisible(!bossMode); webView.setManaged(!bossMode);
         bossPane.setVisible(bossMode);    bossPane.setManaged(bossMode);
-        btnBoss.setText(bossMode ? "🟢 恢复" : "🔴 Boss键");
+        btnBoss.setText(bossMode ? "\uD83D\uDFE2 恢复" : "\uD83D\uDD34 Boss键");
         setStatus(bossMode ? "【掩护模式】代码审查中... 按 Ctrl+W 恢复" : "就绪 · 按 Ctrl+W 切换掩护模式");
     }
 

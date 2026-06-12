@@ -580,3 +580,146 @@
     -fx-tick-label-fill: #666666;
     -fx-font-size: 10px;
 }
+
+.calc-display {
+    -fx-background-color: #313335;
+    -fx-border-color: #444444;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 12;
+}
+
+.calc-expression-field {
+    -fx-font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
+    -fx-font-size: 13px;
+}
+
+.calc-result-label {
+    -fx-font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
+    -fx-font-size: 30px;
+    -fx-text-fill: #e0e0e0;
+}
+
+.calc-memory-indicator {
+    -fx-text-fill: #98c379;
+    -fx-background-color: #2a3a2a;
+    -fx-padding: 2 8;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-font-size: 11px;
+}
+
+.calc-btn {
+    -fx-padding: 10 0;
+    -fx-max-width: 10000;
+    -fx-font-size: 13px;
+}
+
+.calc-btn-op {
+    -fx-background-color: #3c3f41;
+    -fx-border-color: #4a6fa5;
+}
+
+.calc-btn-fn {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #bbbbbb;
+}
+
+.calc-btn-eq {
+    -fx-background-color: #4a6fa5;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #4a6fa5;
+}
+
+.calc-btn-eq:hover {
+    -fx-background-color: #5a7fb5;
+}
+
+/* =====================================================
+   翻译助手样式
+   ===================================================== */
+
+/* 翻译结果区域 */
+.translate-result-area {
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 14px;
+    -fx-font-family: "Microsoft YaHei", "Consolas", sans-serif;
+}
+
+/* 单词本列表 */
+.wordbook-list {
+    -fx-background-color: #1e1e1e;
+    -fx-control-inner-background: #1e1e1e;
+    -fx-border-color: #333333;
+}
+
+.wordbook-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #cccccc;
+    -fx-padding: 6 12;
+    -fx-font-size: 13px;
+    -fx-border-color: transparent transparent #2a2a2a transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.wordbook-list .list-cell:selected {
+    -fx-background-color: #4a6fa5;
+    -fx-text-fill: #ffffff;
+}
+
+.wordbook-list .list-cell:hover:!selected {
+    -fx-background-color: #2a2d2f;
+}
+
+/* 单词本详情区 - ScrollPane 深色背景修复 */
+.wordbook-detail-scroll {
+    -fx-background-color: #1e1e1e;
+    -fx-border-color: transparent;
+}
+
+.wordbook-detail-scroll > .viewport {
+    -fx-background-color: #1e1e1e;
+}
+
+.wordbook-detail-scroll > .corner {
+    -fx-background-color: #1e1e1e;
+}
+
+/* 单词卡片（英文单词翻译时） */
+.word-card {
+    -fx-background-color: #252526;
+    -fx-border-color: #4a6fa5;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.word-card-title {
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 0 0;
+}
+
+.word-card-phonetic {
+    -fx-text-fill: #4a6fa5;
+    -fx-font-size: 14px;
+    -fx-font-family: "Consolas", "Arial", sans-serif;
+}
+
+.word-card-forms {
+    -fx-text-fill: #888888;
+    -fx-font-size: 11px;
+    -fx-padding: 4 0 0 0;
+    -fx-font-family: "Microsoft YaHei", sans-serif;
+}
+
+/* 单词卡片释义 TextFlow */
+.word-card-meaning-flow {
+    -fx-font-family: "Microsoft YaHei", "Consolas", sans-serif;
+}
+
+.word-card-meaning-flow Text {
+    -fx-font-size: 13px;
+}

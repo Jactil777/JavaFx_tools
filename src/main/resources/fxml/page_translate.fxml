@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.devtool.controller.TranslatePageController"
+      spacing="0"
+      style="-fx-background-color:#2b2b2b; -fx-padding:0;">
+
+    <!-- ── 顶部标题栏 ── -->
+    <HBox spacing="10" alignment="CENTER_LEFT"
+          style="-fx-background-color:#3c3f41; -fx-border-color:#1a1a1a; -fx-border-width:0 0 1 0; -fx-padding:10 16;">
+        <Label text="&#128218;" style="-fx-font-size:20px;"/>
+        <Label text="翻译助手" styleClass="title-label" style="-fx-font-size:18px;"/>
+        <Label text="多语言翻译 · 单词释义 · 生词本" style="-fx-text-fill:#888; -fx-font-size:12px;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="清空" onAction="#onClear" styleClass="json-action-btn"
+                style="-fx-padding:5 14;"/>
+        <Button text="复制结果" onAction="#onCopyResult" styleClass="json-action-btn"
+                style="-fx-padding:5 14;"/>
+    </HBox>
+
+    <!-- ── 语言选择 + 翻译按钮 ── -->
+    <HBox spacing="10" alignment="CENTER_LEFT"
+          style="-fx-background-color:#353638; -fx-border-color:#222; -fx-border-width:0 0 1 0; -fx-padding:8 16;">
+
+        <ComboBox fx:id="srcLangCombo" prefWidth="120"
+                  style="-fx-font-size:13px; -fx-background-color:#3c3f41;"/>
+
+        <Button text="&#8646;" onAction="#onSwapLang"
+                style="-fx-background-color:#505355; -fx-text-fill:#ddd; -fx-font-size:14px;
+                       -fx-border-color:#666; -fx-border-radius:3; -fx-background-radius:3;
+                       -fx-cursor:hand; -fx-padding:4 10;"/>
+
+        <ComboBox fx:id="tgtLangCombo" prefWidth="120"
+                  style="-fx-font-size:13px; -fx-background-color:#3c3f41;"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button fx:id="btnTranslate" text="翻译" onAction="#onTranslate" styleClass="button-primary"
+                style="-fx-padding:6 28; -fx-border-radius:4; -fx-background-radius:4;
+                       -fx-cursor:hand; -fx-font-weight:bold; -fx-font-size:14px;"/>
+
+        <Label text="Ctrl+Enter 快捷翻译" style="-fx-text-fill:#555; -fx-font-size:11px;"/>
+    </HBox>
+
+    <!-- ── 主内容区：翻译区 + 单词本 ── -->
+    <SplitPane dividerPositions="0.68" VBox.vgrow="ALWAYS" styleClass="split-pane">
+
+        <!-- 左侧：输入 + 结果 -->
+        <SplitPane orientation="VERTICAL" dividerPositions="0.5" VBox.vgrow="ALWAYS">
+
+            <!-- 上半部分：输入区 -->
+            <VBox spacing="0">
+                <Label text="输入" style="-fx-text-fill:#888; -fx-font-size:12px; -fx-font-weight:bold;
+                       -fx-padding:8 16 4 16;"/>
+                <TextArea fx:id="inputArea" VBox.vgrow="ALWAYS" wrapText="true"
+                          promptText="输入单词或句子，按 Ctrl+Enter 翻译..."
+                          styleClass="json-text-area"
+                          style="-fx-background-color:#1e1e1e; -fx-text-fill:#e0e0e0;
+                                 -fx-border-color:#444; -fx-border-radius:0;
+                                 -fx-font-size:14px; -fx-padding:10 16;"/>
+            </VBox>
+
+            <!-- 下半部分：翻译结果区 -->
+            <VBox spacing="0">
+                <!-- 翻译结果标题栏 -->
+                <HBox alignment="CENTER_LEFT" spacing="10"
+                      style="-fx-padding:8 16 4 16;">
+                    <Label text="翻译结果" style="-fx-text-fill:#888; -fx-font-size:12px; -fx-font-weight:bold;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <!-- ★ 收藏按钮：始终可见，单词翻译后会自动填充单词，句子翻译则点击手动输入 -->
+                    <Button fx:id="btnFavorite" text="&#11088; 收藏单词" onAction="#onAddToBook"
+                            style="-fx-background-color:#4a6fa5; -fx-text-fill:#fff;
+                                   -fx-border-color:#5a7fb5; -fx-border-radius:12; -fx-background-radius:12;
+                                   -fx-font-size:12px; -fx-font-weight:bold;
+                                   -fx-padding:4 14; -fx-cursor:hand;"/>
+                </HBox>
+
+                <!-- 单词卡片（仅英文单词翻译时显示） -->
+                <VBox fx:id="wordCardPane" visible="false" managed="false" styleClass="word-card"
+                      VBox.vgrow="NEVER">
+                    <!-- 单词 + 音标行 -->
+                    <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding:14 18 0 18;">
+                        <Label fx:id="cardWordLabel" text="" styleClass="word-card-title"/>
+                        <Label fx:id="cardPhoneticLabel" text="" styleClass="word-card-phonetic"/>
+                    </HBox>
+                    <!-- 释义内容（TextFlow 支持富文本） -->
+                    <TextFlow fx:id="cardMeaningFlow" style="-fx-padding:10 18 4 18;" VBox.vgrow="NEVER"/>
+                    <!-- 变形词 -->
+                    <Label fx:id="cardFormsLabel" text="" wrapText="true" styleClass="word-card-forms"
+                           style="-fx-padding:4 18 14 18;"/>
+                    <!-- 中文翻译结果（显示在单词卡片下方） -->
+                    <Separator style="-fx-opacity:0.3;"/>
+                    <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding:10 18 0 18;">
+                        <Label text=" 翻译" style="-fx-text-fill:#4a6fa5; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                    </HBox>
+                    <Label fx:id="cardTranslationLabel" text="" wrapText="true"
+                           style="-fx-text-fill:#cccccc; -fx-font-size:13px; -fx-padding:6 18 14 18;
+                                  -fx-font-family:'Microsoft YaHei',sans-serif;"/>
+                </VBox>
+
+                <!-- 普通翻译结果（句子翻译时显示） -->
+                <TextArea fx:id="resultArea" VBox.vgrow="ALWAYS" wrapText="true" editable="false"
+                          promptText="翻译结果显示在这里..."
+                          styleClass="json-text-area translate-result-area"
+                          style="-fx-background-color:#1e1e1e; -fx-text-fill:#e0e0e0;
+                                 -fx-border-color:#444; -fx-border-radius:0;
+                                 -fx-font-size:14px; -fx-padding:10 16;"/>
+            </VBox>
+
+        </SplitPane>
+
+        <!-- 右侧：单词本 -->
+        <VBox spacing="0" style="-fx-background-color:#252526;">
+
+            <!-- 单词本标题栏 -->
+            <HBox spacing="8" alignment="CENTER_LEFT"
+                  style="-fx-background-color:#3c3f41; -fx-padding:10 14; -fx-border-color:#222; -fx-border-width:0 0 1 0;">
+                <Label text="&#128214;" style="-fx-font-size:16px;"/>
+                <Label text="生词本" style="-fx-text-fill:#e0e0e0; -fx-font-size:14px; -fx-font-weight:bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="+ 新建" onAction="#onNewBook" styleClass="json-action-btn"
+                        style="-fx-padding:4 12; -fx-font-size:11px;"/>
+            </HBox>
+
+            <!-- 单词本选择 -->
+            <HBox style="-fx-padding:8 14 4 14;">
+                <ComboBox fx:id="bookCombo" HBox.hgrow="ALWAYS"
+                          style="-fx-font-size:12px; -fx-background-color:#3c3f41;"/>
+            </HBox>
+
+            <!-- 单词列表 + 详情（可上下拖动） -->
+            <SplitPane orientation="VERTICAL" dividerPositions="0.65" VBox.vgrow="ALWAYS">
+
+                <!-- 单词列表 -->
+                <ListView fx:id="wordBookList"
+                          style="-fx-background-color:#1e1e1e; -fx-border-color:#333;
+                                 -fx-border-radius:0; -fx-font-size:13px;"/>
+
+                <!-- 单词详情卡片 -->
+                <VBox style="-fx-background-color:#252526; -fx-border-color:#4a6fa5; -fx-border-width:1;
+                             -fx-border-radius:6; -fx-background-radius:6;
+                             -fx-padding:10 14;">
+                    <HBox alignment="CENTER_LEFT" spacing="6" style="-fx-padding:0 0 6 0;">
+                        <Label text="&#128214;" style="-fx-font-size:12px;"/>
+                        <Label text="单词详情" style="-fx-text-fill:#4a6fa5; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                    </HBox>
+                    <TextFlow fx:id="wordBookDetailFlow" VBox.vgrow="ALWAYS"
+                              style="-fx-padding:4 0;"/>
+                </VBox>
+
+            </SplitPane>
+
+            <!-- 操作按钮 -->
+            <HBox spacing="6" alignment="CENTER"
+                  style="-fx-background-color:#3c3f41; -fx-padding:8 14; -fx-border-color:#222; -fx-border-width:1 0 0 0;">
+                <Button fx:id="btnRemoveFromBook" text="删除选中" onAction="#onRemoveFromBook"
+                        styleClass="json-action-btn"
+                        style="-fx-padding:5 16; -fx-font-size:12px; -fx-border-radius:3; -fx-background-radius:3;"/>
+            </HBox>
+        </VBox>
+
+    </SplitPane>
+
+    <!-- ── 底部状态栏 ── -->
+    <HBox style="-fx-background-color:#3c3f41; -fx-border-color:#222; -fx-border-width:1 0 0 0;
+                 -fx-padding:4 16; -fx-min-height:24;">
+        <Label fx:id="statusLabel" text="就绪"
+               style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+    </HBox>
+
+</VBox>

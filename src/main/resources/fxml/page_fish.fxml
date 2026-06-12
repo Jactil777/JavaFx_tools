@@ -9,55 +9,68 @@
       spacing="0"
       style="-fx-background-color:#2b2b2b; -fx-padding:0;">
 
-    <!-- ── 地址栏 & 工具栏 ── -->
-    <HBox spacing="4" alignment="CENTER_LEFT"
-          style="-fx-background-color:#3c3f41; -fx-border-color:#222; -fx-border-width:0 0 1 0; -fx-padding:6 10;">
+    <!-- ── 第一行：导航 + 地址栏 + Boss键 ── -->
+    <HBox spacing="5" alignment="CENTER_LEFT"
+          style="-fx-background-color:#3c3f41; -fx-border-color:#1a1a1a; -fx-border-width:0 0 1 0; -fx-padding:6 10; -fx-effect:dropshadow(gaussian, rgba(0,0,0,0.3), 3, 0, 0, 1);">
 
         <!-- 导航按钮 -->
         <Button fx:id="btnBack" text="&#8592;" onAction="#onBack" disable="true"
-                style="-fx-background-color:#3c3f41; -fx-text-fill:#aaa; -fx-font-size:16px;
-                       -fx-border-color:transparent; -fx-cursor:hand; -fx-padding:2 8;"/>
+                style="-fx-background-color:#505355; -fx-text-fill:#ddd; -fx-font-size:15px;
+                       -fx-border-color:#666; -fx-border-radius:3; -fx-background-radius:3;
+                       -fx-cursor:hand; -fx-padding:3 9; -fx-min-width:28;"/>
         <Button fx:id="btnForward" text="&#8594;" onAction="#onForward" disable="true"
-                style="-fx-background-color:#3c3f41; -fx-text-fill:#aaa; -fx-font-size:16px;
-                       -fx-border-color:transparent; -fx-cursor:hand; -fx-padding:2 8;"/>
+                style="-fx-background-color:#505355; -fx-text-fill:#ddd; -fx-font-size:15px;
+                       -fx-border-color:#666; -fx-border-radius:3; -fx-background-radius:3;
+                       -fx-cursor:hand; -fx-padding:3 9; -fx-min-width:28;"/>
         <Button fx:id="btnRefresh" text="&#8635;" onAction="#onRefresh"
-                style="-fx-background-color:#3c3f41; -fx-text-fill:#aaa; -fx-font-size:16px;
-                       -fx-border-color:transparent; -fx-cursor:hand; -fx-padding:2 8;"/>
+                style="-fx-background-color:#505355; -fx-text-fill:#ddd; -fx-font-size:15px;
+                       -fx-border-color:#666; -fx-border-radius:3; -fx-background-radius:3;
+                       -fx-cursor:hand; -fx-padding:3 9; -fx-min-width:28;"/>
         <Button text="&#127968;" onAction="#onHome"
-                style="-fx-background-color:#3c3f41; -fx-text-fill:#aaa; -fx-font-size:14px;
-                       -fx-border-color:transparent; -fx-cursor:hand; -fx-padding:2 8;"/>
+                style="-fx-background-color:#505355; -fx-text-fill:#ddd; -fx-font-size:13px;
+                       -fx-border-color:#666; -fx-border-radius:3; -fx-background-radius:3;
+                       -fx-cursor:hand; -fx-padding:3 9; -fx-min-width:28;"/>
 
         <!-- URL 输入框 -->
         <TextField fx:id="urlField" HBox.hgrow="ALWAYS"
                    onKeyPressed="#onUrlKeyPressed"
-                   promptText="输入网址或搜索关键词（回车访问）"
-                   style="-fx-background-color:#2b2b2b; -fx-text-fill:#cccccc;
-                          -fx-border-color:#555; -fx-border-radius:3; -fx-background-radius:3;
-                          -fx-font-family:'Consolas',monospace; -fx-font-size:13px; -fx-padding:4 8;"/>
+                   promptText="输入网址或搜索关键词，按回车访问"
+                   style="-fx-background-color:#1e1e1e; -fx-text-fill:#e0e0e0;
+                          -fx-border-color:#4a6fa5; -fx-border-radius:3; -fx-background-radius:3;
+                          -fx-font-size:13px; -fx-padding:5 10;"/>
+
         <Button fx:id="btnGo" text="Go" onAction="#onGo" styleClass="button-primary"
-                style="-fx-padding:4 14; -fx-border-radius:3; -fx-background-radius:3; -fx-cursor:hand;"/>
+                style="-fx-padding:5 18; -fx-border-radius:3; -fx-background-radius:3; -fx-cursor:hand;
+                       -fx-font-weight:bold; -fx-font-size:13px;"/>
 
-        <!-- 快捷网址 -->
-        <ComboBox fx:id="quickLinkCombo" prefWidth="120"
-                  style="-fx-font-size:12px; -fx-background-color:#3c3f41;"/>
-
-        <!-- 分隔 -->
-        <Separator orientation="VERTICAL" style="-fx-padding:0 6;"/>
-
-        <!-- 缩放 -->
-        <Label text="缩放:" style="-fx-text-fill:#777; -fx-font-size:11px;"/>
-        <Slider fx:id="zoomSlider" min="0.5" max="1.5" value="1.0" prefWidth="80"
-                style="-fx-accent:#4a6fa5;"/>
-
-        <!-- 深色注入 -->
-        <CheckBox fx:id="chkDarkInject" text="深色" selected="true" onAction="#onDarkInjectChanged"
-                  style="-fx-text-fill:#888; -fx-font-size:11px;"/>
-
-        <!-- Boss键 —— 最右，醒目 -->
+        <!-- Boss键 —— 最右，随时可按 -->
         <Button fx:id="btnBoss" text="&#128308; Boss键" onAction="#toggleBossMode"
                 style="-fx-background-color:#5a2a2a; -fx-text-fill:#ff8888;
                        -fx-border-color:#7a3a3a; -fx-border-radius:3; -fx-background-radius:3;
-                       -fx-font-size:12px; -fx-font-weight:bold; -fx-padding:4 12; -fx-cursor:hand;"/>
+                       -fx-font-size:12px; -fx-font-weight:bold; -fx-padding:5 14; -fx-cursor:hand;"/>
+    </HBox>
+
+    <!-- ── 第二行：辅助工具栏 ── -->
+    <HBox spacing="8" alignment="CENTER_LEFT"
+          style="-fx-background-color:#353638; -fx-border-color:#222; -fx-border-width:0 0 1 0; -fx-padding:4 10;">
+        <Label text="&#127774; 快捷:" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+        <ComboBox fx:id="quickLinkCombo" prefWidth="130"
+                  style="-fx-font-size:12px; -fx-background-color:#3c3f41;"/>
+
+        <Separator orientation="VERTICAL" style="-fx-opacity:0.4; -fx-padding:0 4;"/>
+
+        <Label text="缩放:" style="-fx-text-fill:#666; -fx-font-size:11px;"/>
+        <Slider fx:id="zoomSlider" min="0.5" max="1.5" value="1.0" prefWidth="90"
+                style="-fx-accent:#4a6fa5;"/>
+        <Label fx:id="zoomLabel" text="100%" style="-fx-text-fill:#666; -fx-font-size:11px; -fx-min-width:34;"/>
+
+        <Separator orientation="VERTICAL" style="-fx-opacity:0.4; -fx-padding:0 4;"/>
+
+        <CheckBox fx:id="chkDarkInject" text="深色注入" selected="true" onAction="#onDarkInjectChanged"
+                  style="-fx-text-fill:#888; -fx-font-size:11px;"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Ctrl+W = Boss键" style="-fx-text-fill:#3a3a3a; -fx-font-size:10px;"/>
     </HBox>
 
     <!-- ── 加载进度条 ── -->
@@ -67,13 +80,9 @@
 
     <!-- ── 主内容区（浏览器 / Boss伪装） ── -->
     <StackPane fx:id="browserContainer" VBox.vgrow="ALWAYS">
+        <!-- WebView 由 Controller 动态插入到 StackPane -->
 
-        <!-- 正常浏览器区域 -->
-        <VBox fx:id="browserPane" style="-fx-background-color:#2b2b2b;">
-            <!-- WebView 由 Controller 动态插入到此 VBox 的第0个子节点 -->
-        </VBox>
-
-        <!-- Boss键假界面：一段 Java 代码 -->
+        <!-- Boss键假界面 -->
         <VBox fx:id="bossPane" managed="false" visible="false"
               style="-fx-background-color:#1e1e1e; -fx-padding:20 30;">
             <HBox spacing="12" alignment="CENTER_LEFT" style="-fx-padding:0 0 12 0;">
@@ -101,9 +110,7 @@
         <Label fx:id="loadingLabel" text="" visible="false"
                style="-fx-text-fill:#e5c07b; -fx-font-size:11px;"/>
         <Label fx:id="statusLabel" text="就绪 · 按 Ctrl+W 切换掩护模式"
-               style="-fx-text-fill:#666; -fx-font-size:11px;" HBox.hgrow="ALWAYS"/>
-        <Label text="Ctrl+W = Boss键" style="-fx-text-fill:#3a3a3a; -fx-font-size:10px;"/>
+               style="-fx-text-fill:#666; -fx-font-size:11px;"/>
     </HBox>
 
 </VBox>
-
