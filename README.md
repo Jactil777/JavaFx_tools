@@ -1,347 +1,529 @@
-# DevToolBox · 后端开发者桌面工具箱
+# DevToolBox
 
-> 专为开发者打造的本地桌面工具箱，纯本地运算，无网络请求，无数据上传。  
-> 技术栈：Java 17 + JavaFX 17 + Maven
+> A local-first desktop toolbox for backend developers, built with Java 17 and JavaFX.
+
+[中文](#devtoolbox-开发者工具箱) | [English](#devtoolbox-developer-toolbox)
+
+![Java](https://img.shields.io/badge/Java-17-blue)
+![JavaFX](https://img.shields.io/badge/JavaFX-17.0.8-blueviolet)
+![Maven](https://img.shields.io/badge/Build-Maven-C71A36)
+![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey)
+![License](https://img.shields.io/badge/License-MIT-green)
 
 ---
+
+# DevToolBox 开发者工具箱
+
+DevToolBox 是一个面向后端开发者和日常工程效率场景的 JavaFX 桌面工具箱。它把 JSON、SQL、文本处理、时间戳、加密解密、二维码、Cron、开发日报、翻译、AI 助手等常用能力整合到一个本地桌面应用中。
+
+项目优先考虑本地运行、低依赖、启动简单和可维护的页面化架构。除 AI 助手、翻译助手、内置浏览器等明确需要网络的功能外，其他工具均在本机完成计算。
 
 ## 目录
 
-- [项目概览](#项目概览)
-- [环境要求](#环境要求)
+- [特性](#特性)
+- [功能模块](#功能模块)
+- [技术栈](#技术栈)
+- [快速开始](#快速开始)
+- [打包 Windows 安装包](#打包-windows-安装包)
+- [AI 助手配置](#ai-助手配置)
+- [数据与隐私](#数据与隐私)
 - [项目结构](#项目结构)
-- [启动方式](#启动方式)
-- [基础架构说明](#基础架构说明)
-- [新增业务功能页面（开发指引）](#新增业务功能页面开发指引)
-- [功能模块状态](#功能模块状态)
-- [版本记录](#版本记录)
+- [开发指南](#开发指南)
+- [贡献指南](#贡献指南)
+- [安全建议](#安全建议)
+- [许可证](#许可证)
+- [English](#devtoolbox-developer-toolbox)
 
----
+## 特性
 
-## 项目概览
+- 本地桌面应用：无需部署服务端，直接通过 JavaFX 运行。
+- 多工具集合：覆盖开发者高频文本、数据、编码、调试和日报场景。
+- AI 助手：支持火山方舟 OpenAI-compatible Chat Completions，支持会话历史和模型切换。
+- 页面化架构：每个工具以 FXML + Controller + Util 的方式组织，便于扩展。
+- 深色主题：统一的深色 UI 风格，适合长时间使用。
+- 本地持久化：生词本、AI 配置、AI 会话等数据保存在本机。
+- Windows 打包：提供 `jpackage` 脚本，可生成自包含 JRE 的安装包。
 
-| 项目 | 说明 |
-|------|------|
-| 应用名称 | DevToolBox 开发者工具箱 |
-| 当前版本 | v1.0.10 |
-| 开发语言 | Java 17 |
-| UI 框架 | JavaFX 17.0.8 |
-| 构建工具 | Maven 3.x |
-| 运行平台 | Windows 10 / 11 |
-| 网络依赖 | 部分功能需联网（翻译助手） |
-| 作者联系方式 | `jactil777@gmail.com` |
+## 功能模块
 
----
+| 模块 | 说明 |
+| --- | --- |
+| JSON 工具 | 格式化、压缩、转义、反转义、差异对比、实体类生成与转换 |
+| 随机密码 | 可配置长度、字符集、强度评估、批量生成 |
+| 二维码 | 支持文本、网址、邮箱，支持保存 PNG 和复制到剪贴板 |
+| Cron 表达式 | 可视化配置、表达式校验、触发时间预览、常用模板 |
+| 加密解密 | Hash、HMAC、AES、Base64、URL 编解码 |
+| 时间戳工具 | 时间戳转换、多时区显示、日期差、里程碑时间 |
+| 计算器 | 表达式计算、历史记录、结果复制、键盘快捷输入 |
+| AI 助手 | 火山方舟接入、多轮会话、历史列表、模型切换、本地配置 |
+| 翻译助手 | 多语言翻译、英文单词释义、生词本本地存储 |
+| SQL 工具 | SQL 格式化、语法检查、参数填充、INSERT 模板、元信息提取 |
+| 文本处理 | 批量替换、行操作、大小写转换、空格缩进、编码转换、统计 |
+| 开发日报 | 读取本地 Git 日志，按日期生成多格式日报 |
+| 调试工具 | JavaFX WebView 内置浏览器、快捷网址、深色页面注入 |
 
-## 环境要求
+## 技术栈
 
-| 工具 | 版本要求 | 备注 |
-|------|----------|------|
-| JDK | **17**（必须） | 推荐 Microsoft OpenJDK 17 / Liberica JDK 17 |
-| Maven | 3.6+ | IDEA 内置或系统安装均可 |
-| IDE | IntelliJ IDEA | 推荐，已预置运行配置 |
+| 类别 | 技术 |
+| --- | --- |
+| 语言 | Java 17 |
+| UI | JavaFX 17.0.8 |
+| 构建 | Maven |
+| JSON | Jackson |
+| 二维码 | ZXing |
+| 日志 | SLF4J + Logback |
+| AI 接口 | OpenAI-compatible Chat Completions，默认适配火山方舟 |
+| 目标平台 | Windows 10 / 11 |
 
-> ⚠️ **重要**：本项目使用的 JDK 17（Microsoft OpenJDK）**不内置 JavaFX**，  
-> JavaFX 运行时完全由 Maven 依赖提供（`classifier=win` 含原生 DLL）。  
-> 不要用 JDK 8 运行，不要用不带 `classifier=win` 的 JavaFX 依赖。
-
----
-
-## 项目结构
-
-```
-JavaFx_tools/
-├── pom.xml                          # Maven 依赖 & 插件配置
-├── README.md                        # 本文件
-└── src/main/
-    ├── java/com/devtool/
-    │   ├── Launcher.java            # ★ 程序启动入口（通过此类运行，非 Main）
-    │   ├── Main.java                # JavaFX Application 实现（窗口初始化）
-    │   ├── config/
-    │   │   └── AppConfig.java       # 全局常量（窗口尺寸、版本号、FXML 路径）
-    │   ├── controller/
-    │   │   ├── BaseController.java  # 页面控制器基类（定义生命周期方法）
-    │   │   ├── MainController.java  # 主框架控制器（导航栏 + 页面切换 + 缓存）
-    │   │   ├── EmptyPageController.java  # 首页欢迎页控制器
-    │   │   ├── JsonPageController.java   # JSON 工具箱控制器
-    │   │   └── CalculatorPageController.java # 计算器控制器
-    │   ├── util/
-    │   │   ├── DialogUtil.java      # 通用弹窗工具（info / error / warn / confirm）
-    │   │   ├── ExceptionHandler.java # 全局未捕获异常处理（防闪退）
-    │   │   ├── CalculatorUtil.java  # 计算器工具类（表达式解析与计算）
-    │   │   ├── JsonUtil.java        # JSON 工具类（格式化、压缩、对比、生成代码）
-    │   │   └── SystemUtil.java      # 系统工具（剪贴板、打开文件/URL 等）
-    │   └── view/
-    │       └── PageEnum.java        # 页面枚举（统一管理所有功能页，新增只需加一行）
-    └── resources/
-        ├── fxml/
-        │   ├── main.fxml            # 主框架布局（顶栏 + 左侧导航 + 内容区 + 状态栏）
-        │   ├── page_empty.fxml      # 首页欢迎页布局
-        │   ├── page_calculator.fxml # 计算器页面布局
-        │   └── page_json.fxml       # JSON 工具箱页面布局
-        ├── css/
-        │   └── global.css           # 全局深色主题样式
-        ├── images/
-        │   └── app_icon.png         # 窗口图标（可替换为自己的 PNG）
-        └── logback.xml              # 日志配置（控制台 + 文件滚动，保留 7 天）
-```
-
----
-
-## 启动方式
-
-### 方式一：Maven 命令行（推荐，任何情况都可用）
-
-```powershell
-# 1. 设置 JAVA_HOME 指向 JDK 17
-$env:JAVA_HOME = "D:\devtools\jdk17"   # 替换为你本机 JDK17 路径
-
-# 2. 启动应用
-cd E:\person_code\JavaFx_tools
-mvn exec:java
-```
-
-### 方式二：IDEA 内置 Maven 面板
-
-1. 打开右侧 **Maven** 面板
-2. 展开 `Plugins` → `exec` → 双击 **`exec:java`**
-
-### 方式三：IDEA Run 菜单（已预置配置）
-
-1. 顶部菜单 **Run** → **DevToolBox Run**
-2. 该配置文件位于 `.idea/runConfigurations/DevToolBox_Run.xml`，IDEA 自动识别
-
-> ⛔ **不要**直接右键 `Main.java` 或 `Launcher.java` → Run  
-> IDEA 的普通 Application 运行方式不会正确处理 JavaFX 的 classpath，  
-> 会报 `缺少 JavaFX 运行时组件` 或 `Module javafx.controls not found`。
-
----
-
-## 打包 Windows 安装包
-
-### 快速开始
-
-**双击运行** 项目根目录的 **`一键打包.bat`** 文件，或在 PowerShell 中执行：
-
-```powershell
-cd E:\person_code\JavaFx_tools
-.\一键打包.bat
-# 或
-.\build-exe.ps1
-```
-
-打包完成后，安装包位于 `dist\DevToolBox-1.0.0.exe`（约 60 MB，含完整 JRE）
+## 快速开始
 
 ### 环境要求
 
-| 工具 | 版本 | 说明 |
-|------|------|------|
-| **JDK 17+** | 必需 | 需包含 jpackage 工具 |
-| **Maven 3.6+** | 必需 | 用于编译打包 |
-| **WiX Toolset 3.x** | 必需 | 用于生成 Windows 安装包 |
+- JDK 17
+- Maven 3.6+
+- Windows 10 / 11
 
-#### 安装 WiX Toolset
+> 本项目使用 Maven 引入带 `classifier=win` 的 JavaFX 依赖。请使用 JDK 17，不要使用 JDK 8 直接运行。
 
-1. 下载：https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314.exe
-2. 双击安装
-3. 重启 PowerShell
+### 运行
 
-打包脚本会自动检测 WiX 并添加到 PATH。
-
-### 打包流程
-
-```
-开始打包
-  ↓
-[1/7] 检查 Java 17 环境
-  ↓
-[2/7] 检查 Maven
-  ↓
-[3/7] 检查 WiX Toolset（自动配置 PATH）
-  ↓
-[4/7] 清理旧文件（dist、target）
-  ↓
-[5/7] Maven 编译打包（30-60秒）
-  ↓
-[6/7] 收集依赖 jar
-  ↓
-[7/7] 生成 Windows 安装包（1-2分钟）
-  ↓
-完成！dist\DevToolBox-1.0.0.exe
-```
-
-**首次打包约 2-3 分钟，后续打包约 1-2 分钟。**
-
-### 生成的安装包特性
-
-✅ **自包含 JRE** - 用户无需安装 Java  
-✅ **标准安装向导** - Windows 原生安装体验  
-✅ **开始菜单** - 自动添加快捷方式  
-✅ **桌面快捷方式** - 可选创建  
-✅ **完整卸载** - 控制面板标准卸载  
-✅ **UTF-8 编码** - 完美支持中文，无乱码
-
-### 疑难解答
-
-**Q: 双击 .ps1 文件没反应？**  
-A: 请双击 `一键打包.bat` 文件，或右键 `.ps1` 文件 → **使用 PowerShell 运行**
-
-**Q: 提示"无法加载文件"？**  
-A: PowerShell 执行策略限制，管理员运行 PowerShell：
 ```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+git clone https://github.com/Jactil777/JavaFx_tools.git
+cd JavaFx_tools
+mvn exec:java
 ```
 
-**Q: 找不到 WiX 工具？**  
-A: 安装 WiX Toolset 3.14 后重启 PowerShell，脚本会自动检测
+也可以在 IntelliJ IDEA 中打开项目，通过 Maven 面板运行：
 
-**Q: 打包后的 exe 太大？**  
-A: 正常现象，因为包含了完整的 JRE（约 50-60 MB），用户无需安装 Java
+```text
+Plugins -> exec -> exec:java
+```
+
+### 构建
+
+```powershell
+mvn clean package -DskipTests
+```
+
+构建产物位于 `target/`。
+
+## 打包 Windows 安装包
+
+项目提供了一键打包脚本：
+
+```powershell
+.\一键打包.bat
+```
+
+或直接执行：
+
+```powershell
+.\build-exe.ps1
+```
+
+打包依赖：
+
+- JDK 17+，需包含 `jpackage`
+- Maven 3.6+
+- WiX Toolset 3.x
+
+安装包默认输出到 `dist/`。由于安装包包含 JRE，文件体积较大是正常现象。
+
+## AI 助手配置
+
+AI 助手默认适配火山方舟的 OpenAI-compatible Chat Completions 接口：
+
+```text
+https://ark.cn-beijing.volces.com/api/v3/chat/completions
+```
+
+已内置常见方舟模型 ID，例如：
+
+- `doubao-seed-2-0-mini-260428`
+- `doubao-seed-2-0-pro-260215`
+- `doubao-seed-2-0-lite-260428`
+- `doubao-seed-2-0-code-preview-260215`
+- `doubao-seed-1-8-251228`
+- `doubao-seed-character-251128`
+- `glm-4-7-251222`
+- `deepseek-v3-2-251201`
+- `deepseek-v4-flash-260425`
+- `deepseek-v4-pro-260425`
+
+在应用中打开：
+
+```text
+AI助手 -> 模型设置
+```
+
+填写 API Key，选择或手动输入模型 ID，即可开始对话。
+
+> 不要把 API Key 写进源码或提交到 Git。DevToolBox 会把 AI 配置保存在用户目录。
+
+## 数据与隐私
+
+DevToolBox 默认尽量在本地处理数据。以下数据会保存在本机：
+
+| 数据 | 默认位置 |
+| --- | --- |
+| AI 配置 | `%USERPROFILE%\.devtoolbox\ai-assistant.properties` |
+| AI 会话历史 | `%USERPROFILE%\.devtoolbox\ai-conversations.json` |
+| 生词本 | `wordbook/*.json` |
+| 日志 | `logs/` |
+
+需要网络访问的功能：
+
+- AI 助手：请求你配置的 AI 服务，例如火山方舟。
+- 翻译助手：请求翻译与词典服务。
+- 调试工具：内置浏览器访问用户输入的网址。
+
+请不要在未确认的第三方服务中输入敏感数据、生产密钥或隐私内容。
+
+## 项目结构
+
+```text
+JavaFx_tools/
+├── pom.xml
+├── build-exe.ps1
+├── 一键打包.bat
+├── wordbook/
+└── src/main/
+    ├── java/com/devtool/
+    │   ├── Launcher.java
+    │   ├── Main.java
+    │   ├── config/
+    │   ├── controller/
+    │   ├── util/
+    │   └── view/
+    └── resources/
+        ├── css/
+        ├── fxml/
+        ├── images/
+        └── logback.xml
+```
+
+核心设计：
+
+- `PageEnum`：统一注册所有工具页面。
+- `MainController`：负责左侧导航、页面切换和页面缓存。
+- `BaseController`：提供 `onPageInit()` / `onPageDestroy()` 生命周期。
+- `controller`：处理 JavaFX 交互。
+- `util`：承载可复用的业务逻辑。
+- `resources/fxml`：页面布局。
+- `resources/css/global.css`：全局主题样式。
+
+## 开发指南
+
+新增一个工具页通常需要四步：
+
+1. 在 `src/main/resources/fxml/` 新增页面 FXML。
+2. 在 `src/main/java/com/devtool/controller/` 新增 Controller，并继承 `BaseController`。
+3. 如有通用逻辑，在 `src/main/java/com/devtool/util/` 新增 Util。
+4. 在 `PageEnum` 中注册页面，左侧导航会自动出现入口。
+
+建议：
+
+- UI 样式优先复用 `global.css` 中已有类。
+- 耗时任务应放到后台线程，避免阻塞 JavaFX UI 线程。
+- API Key、Token、个人数据不要写入仓库。
+- 涉及公共逻辑时优先放入 `util`，避免 Controller 过重。
+
+## 贡献指南
+
+欢迎提交 Issue、建议和 Pull Request。
+
+推荐流程：
+
+1. Fork 本仓库。
+2. 创建特性分支。
+3. 保持改动聚焦，避免混入无关格式化。
+4. 提交前运行：
+
+```powershell
+mvn -q -DskipTests package
+```
+
+5. 在 PR 中说明改动内容、测试方式和可能影响。
+
+## 安全建议
+
+- 不要提交 API Key、Token、Cookie 或任何生产密钥。
+- 如果密钥曾经出现在聊天、截图或提交记录中，请及时轮换。
+- AI 助手会把输入内容发送到配置的模型服务，请自行确认服务商的数据策略。
+- 打包发布前建议检查 `logs/`、`wordbook/` 和用户配置目录，避免夹带个人数据。
+
+## 路线图
+
+- 增加更多 AI Provider 预设。
+- 为核心 Util 补充单元测试。
+- 为 README 增加应用截图。
+- 将版本记录迁移到独立 `CHANGELOG.md`。
+- 增强跨平台打包支持。
+
+## 许可证
+
+本项目基于 [MIT License](LICENSE) 开源。
+
+## 联系方式
+
+- Author: Jactil
+- Email: `jactil777@gmail.com`
 
 ---
 
-## 基础架构说明
+# DevToolBox Developer Toolbox
 
-### 页面切换机制
+DevToolBox is a JavaFX desktop toolbox for backend developers and daily engineering workflows. It brings together JSON, SQL, text processing, timestamp conversion, encryption, QR code generation, Cron helpers, Git daily reports, translation, and an AI assistant in a single local desktop application.
 
-```
-用户点击左侧导航
-        ↓
-MainController.switchPage(PageEnum)
-        ↓
-从缓存(pageCache)中取 / 首次用 FXMLLoader 加载
-        ↓
-设置到 contentPane 中心区域
-        ↓
-调用 BaseController.onPageInit()  ← 每次切换都触发
-```
+The project is designed to be local-first, easy to run, and easy to extend. Most tools run completely on your machine. Features such as the AI assistant, translator, and embedded browser access external services only when you use them.
 
-- **页面缓存**：每个页面首次加载后缓存到 `Map<PageEnum, Pane>`，切换时不重复解析 FXML
-- **生命周期**：`onPageInit()` 每次切换到该页时触发；`onPageDestroy()` 离开时触发
+## Contents
 
-### 为什么用 `Launcher` 而不是 `Main` 作为入口？
+- [Highlights](#highlights)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Quick Start](#quick-start)
+- [Windows Packaging](#windows-packaging)
+- [AI Assistant Configuration](#ai-assistant-configuration)
+- [Data and Privacy](#data-and-privacy)
+- [Project Structure](#project-structure)
+- [Development Guide](#development-guide)
+- [Contributing](#contributing)
+- [Security](#security)
+- [License](#license)
+- [Contact](#contact)
 
-JavaFX 17 是模块化设计，JVM 在加载 `Application` 子类之前会先做模块检查。  
-当 JavaFX 通过 Maven classpath 而非 `--module-path` 提供时，这个检查会失败。  
-`Launcher`（普通类，非 `Application` 子类）作为入口，绕过了这个时序问题。  
-这是 OpenJFX 官方推荐的标准做法。
+## Highlights
 
-### 通用工具类速查
+- Local desktop app: no backend service required.
+- Developer-focused tools: common utilities for data, text, encoding, debugging, and reporting.
+- AI assistant: Volcengine Ark-compatible Chat Completions, conversation history, and model switching.
+- Page-based architecture: each tool is organized with FXML, Controller, and Util classes.
+- Dark theme: consistent UI for long working sessions.
+- Local persistence: wordbooks, AI configuration, and AI conversation history are stored locally.
+- Windows packaging: `jpackage` scripts generate a self-contained installer.
 
-| 类 | 常用方法 |
-|----|---------|
-| `DialogUtil` | `info(title, msg)` / `error(title, msg)` / `warn(title, msg)` / `confirm(title, msg)→boolean` |
-| `SystemUtil` | `copyToClipboard(text)` / `copyToClipboardSilent(text)` / `openFile(file)` / `openUrl(url)` |
-| `JsonUtil` | `format(json)` / `compress(json)` / `escape(json)` / `unescape(json)` / `compare(json1, json2)` / `generateJavaClass(json, className)` |
+## Features
 
----
+| Tool | Description |
+| --- | --- |
+| JSON Tools | Format, minify, escape, unescape, diff, and generate entity classes |
+| Password Generator | Configurable length, character sets, strength score, and batch generation |
+| QR Code Generator | Generate QR codes for text, URLs, and email content |
+| Cron Helper | Visual editing, validation, next trigger preview, and templates |
+| Crypto Tools | Hash, HMAC, AES, Base64, and URL encoding/decoding |
+| Timestamp Tools | Timestamp conversion, time zones, date diff, and milestones |
+| Calculator | Expression calculation, history, copy actions, and keyboard shortcuts |
+| AI Assistant | Ark integration, multi-turn chat, history list, model switching |
+| Translator | Multi-language translation, English word definitions, local wordbooks |
+| SQL Tools | Formatting, validation, parameter filling, INSERT templates, metadata extraction |
+| Text Tools | Replace, line operations, case conversion, whitespace, encoding, and stats |
+| Git Report | Generate daily reports from local Git logs |
+| Debug Browser | Embedded JavaFX WebView browser with shortcuts and dark-page injection |
 
-## 新增业务功能页面（开发指引）
+## Tech Stack
 
-以新增「JSON 工具」页为例，只需 **3 步**：
+| Area | Technology |
+| --- | --- |
+| Language | Java 17 |
+| UI | JavaFX 17.0.8 |
+| Build | Maven |
+| JSON | Jackson |
+| QR Code | ZXing |
+| Logging | SLF4J + Logback |
+| AI API | OpenAI-compatible Chat Completions, default preset for Volcengine Ark |
+| Target Platform | Windows 10 / 11 |
 
-### 第 1 步：新建 FXML 布局
+## Quick Start
 
-新建 `src/main/resources/fxml/page_json.fxml`，参照 `page_empty.fxml` 的结构：
+### Requirements
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.VBox?>
+- JDK 17
+- Maven 3.6+
+- Windows 10 / 11
 
-<VBox xmlns="http://javafx.com/javafx/17"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.devtool.controller.JsonPageController"
-      styleClass="page-container">
-    <!-- 在这里写页面 UI -->
-</VBox>
-```
+This project uses Maven-managed JavaFX dependencies with the Windows classifier. Use JDK 17; do not run it with JDK 8.
 
-### 第 2 步：新建 Controller
+### Run
 
-新建 `src/main/java/com/devtool/controller/JsonPageController.java`：
-
-```java
-package com.devtool.controller;
-
-public class JsonPageController extends BaseController {
-
-    @Override
-    public void onPageInit() {
-        // 每次切换到此页时执行（刷新数据、重置状态等）
-    }
-}
-```
-
-### 第 3 步：在 PageEnum 中注册
-
-打开 `src/main/java/com/devtool/view/PageEnum.java`，取消注释对应行：
-
-```java
-// 改动前（注释状态）：
-// JSON_TOOL("📋 JSON工具", "/fxml/page_json.fxml"),
-
-// 改动后（取消注释）：
-JSON_TOOL("📋 JSON工具", "/fxml/page_json.fxml"),
+```powershell
+git clone https://github.com/Jactil777/JavaFx_tools.git
+cd JavaFx_tools
+mvn exec:java
 ```
 
-**重启应用，左侧导航栏自动出现新菜单项，点击即可跳转。**
+You can also run it from IntelliJ IDEA:
 
----
+```text
+Plugins -> exec -> exec:java
+```
 
-## 功能模块状态
+### Build
 
-### 已完成（基础架构）
+```powershell
+mvn clean package -DskipTests
+```
 
-| 模块 | 状态 | 说明 |
-|------|------|------|
-| 主窗口框架 | ✅ 完成 | 顶栏 + 左侧导航 + 内容区 + 底部状态栏 |
-| 深色主题 CSS | ✅ 完成 | 全局深色配色，统一控件样式 |
-| 页面切换框架 | ✅ 完成 | 带缓存的动态 FXML 页面切换 |
-| 控制器基类 | ✅ 完成 | `onPageInit` / `onPageDestroy` 生命周期 |
-| 全局异常捕获 | ✅ 完成 | 未捕获异常弹窗提示，防止闪退 |
-| 通用弹窗工具 | ✅ 完成 | info / error / warn / confirm，跨线程安全 |
-| 剪贴板 & 系统工具 | ✅ 完成 | 复制、打开文件、打开 URL |
-| 日志系统 | ✅ 完成 | logback，控制台 + 文件滚动（`logs/` 目录） |
-| 首页欢迎页 | ✅ 完成 | 展示待上线功能列表 |
+Build outputs are generated under `target/`.
 
-### 已完成（业务功能）
+## Windows Packaging
 
-| 模块 | 状态 | 说明 |
-|------|------|------|
-| 📋 JSON 工具箱 | ✅ 完成 | 格式化、压缩、转义/反转义、JSON 对比（高亮差异行）、生成 Java/Python/Go 实体类 |
-| 🔑 随机密码生成 | ✅ 完成 | 可配置长度/字符集/规则，强度评估，批量生成，一键复制 |
-| 📷 二维码生成器 | ✅ 完成 | 支持文本/网址/邮箱，可调尺寸，保存 PNG，复制到剪贴板 |
-| ⏰ Cron 表达式 | ✅ 完成 | 可视化配置，实时预览，下次 10 次触发时间，14 个常用模板 |
-| 🔐 加密解密 | ✅ 完成 | MD5/SHA-1/SHA-256/SHA-512/HMAC 实时计算、AES-CBC/ECB 加解密、Base64/URL 编解码 |
-| ⏱ 时间戳工具 | ✅ 完成 | 实时时钟、时间戳↔日期双向转换（秒/毫秒自动识别）、14 时区并排显示/转换、日期差（自然日+工作日）、常用时间戳参考 |
-| 🗄 SQL 工具箱 | ✅ 完成 | 格式化、语法检测（括号/AND-OR/JOIN-ON/尾逗号/无WHERE危险操作）、关键字大小写、参数填充、INSERT模板、提取表名字段 |
-| 📝 文本批量处理 | ✅ 完成 | 批量替换（支持正则）、行操作（去重/排序/过滤/行号）、大小写转换（含snake/camel）、空格缩进、编码转换（Unicode/HTML实体）、实时统计；**切换页面数据不丢失** |
-| 🔧 调试工具（摸鱼神器） | ✅ 完成 | 内置浏览器、深色主题注入、Ctrl+W Boss键一键切换伪装代码界面、快捷网址、缩放调节 |
-| 📊 开发日报生成 | ✅ 完成 | 读取本地 Git 仓库，日期范围查询，分天导航，多格式输出（纯文本/Markdown/钉钉/飞书），智能工作摘要 |
-| 🧮 计算器 | ✅ 完成 | 完整计算过程历史；表达式/结果/整行复制；支持括号、幂（^）、√（sqrt）与键盘快捷键 |
-| 📚 翻译助手 | ✅ 完成 | 12 种语言互译（中/英/日/韩/法/西/俄等）；英文单词释义/音标/变形/例句；生词本本地存储；自动检测语言 |
+Use the bundled script:
 
-### 待开发（业务功能）
+```powershell
+.\一键打包.bat
+```
 
-暂无，所有计划功能均已完成 🎉
+Or run the PowerShell script directly:
 
----
+```powershell
+.\build-exe.ps1
+```
 
-## 版本记录
+Packaging requirements:
 
-| 版本 | 日期 | 说明 |
-|------|------|------|
-| v1.0.0 | 2026-06-11 | 项目基座完成：主框架、导航、深色主题、通用工具类、日志、异常捕获 |
-| v1.0.1 | 2026-06-11 | 完成 JSON 工具箱：格式化、压缩、转义/反转义、JSON 对比（差异高亮）、生成 Java/Python/Go 实体类 |
-| v1.0.2 | 2026-06-11 | 完成随机密码生成器：可配置字符集/长度/规则，强度评估，批量生成 |
-| v1.0.3 | 2026-06-11 | 完成二维码生成器（文本/网址/邮箱）、Cron 表达式生成器（可视化配置 + 触发预览）|
-| v1.0.4 | 2026-06-11 | 完成加密解密工具（Hash/HMAC/AES/Base64/URL）、时间戳工具（实时时钟/多时区/日期差/里程碑）|
-| v1.0.5 | 2026-06-11 | JSON 新增实体类→JSON 转换；完成 SQL 工具箱（格式化/语法检测/参数填充/INSERT模板/提取元信息）|
-| v1.0.6 | 2026-06-11 | 完成文本批量处理（替换/行操作/大小写/空格/编码/统计）；数据持久化设计，切换页面不丢失 |
-| v1.0.7 | 2026-06-11 | 完成开发日报生成器（本地 Git 日志读取，多格式输出，智能工作摘要分类）|
-| v1.0.8 | 2026-06-11 | 首页重设计：工具卡片网格展示，动态统计工具数量；开发日报支持日期范围+分天导航 |
-| v1.0.9 | 2026-06-11 | 完成摸鱼神器：内置 WebView 浏览器、深色注入、Ctrl+W Boss键伪装、快捷网址 |
-| v1.0.10 | 2026-06-12 | 新增计算器：完整历史过程、可复制结果/历史、支持括号/幂/√/键盘快捷键 |
-| v1.0.11 | 2026-06-12 | 新增翻译助手：12种语言互译、英文单词释义/音标/变形、生词本本地存储、自动检测语言 |
-| v1.0.12 | 2026-06-12 | UI 图标统一配色；补充作者联系方式 |
+- JDK 17+ with `jpackage`
+- Maven 3.6+
+- WiX Toolset 3.x
 
+The installer is generated under `dist/`. It includes a JRE, so the file size is expected to be relatively large.
+
+## AI Assistant Configuration
+
+The AI assistant defaults to Volcengine Ark's OpenAI-compatible Chat Completions endpoint:
+
+```text
+https://ark.cn-beijing.volces.com/api/v3/chat/completions
+```
+
+Built-in Ark model IDs include:
+
+- `doubao-seed-2-0-mini-260428`
+- `doubao-seed-2-0-pro-260215`
+- `doubao-seed-2-0-lite-260428`
+- `doubao-seed-2-0-code-preview-260215`
+- `doubao-seed-1-8-251228`
+- `doubao-seed-character-251128`
+- `glm-4-7-251222`
+- `deepseek-v3-2-251201`
+- `deepseek-v4-flash-260425`
+- `deepseek-v4-pro-260425`
+
+Open the following panel in the app:
+
+```text
+AI Assistant -> Model Settings
+```
+
+Enter your API key, select or type a model ID, and start chatting.
+
+Do not hardcode API keys in source files or commit them to Git. DevToolBox stores AI settings in your local user directory.
+
+## Data and Privacy
+
+DevToolBox keeps most data local by default.
+
+| Data | Default Location |
+| --- | --- |
+| AI settings | `%USERPROFILE%\.devtoolbox\ai-assistant.properties` |
+| AI conversations | `%USERPROFILE%\.devtoolbox\ai-conversations.json` |
+| Wordbooks | `wordbook/*.json` |
+| Logs | `logs/` |
+
+Network-enabled features:
+
+- AI Assistant: sends requests to your configured AI provider, such as Volcengine Ark.
+- Translator: uses translation and dictionary services.
+- Debug Browser: opens URLs entered by the user.
+
+Do not enter secrets, production keys, or sensitive personal data into untrusted third-party services.
+
+## Project Structure
+
+```text
+JavaFx_tools/
+├── pom.xml
+├── build-exe.ps1
+├── 一键打包.bat
+├── wordbook/
+└── src/main/
+    ├── java/com/devtool/
+    │   ├── Launcher.java
+    │   ├── Main.java
+    │   ├── config/
+    │   ├── controller/
+    │   ├── util/
+    │   └── view/
+    └── resources/
+        ├── css/
+        ├── fxml/
+        ├── images/
+        └── logback.xml
+```
+
+Key concepts:
+
+- `PageEnum`: registers all tool pages.
+- `MainController`: handles navigation, page switching, and page caching.
+- `BaseController`: provides `onPageInit()` and `onPageDestroy()` lifecycle hooks.
+- `controller`: JavaFX interaction logic.
+- `util`: reusable business logic.
+- `resources/fxml`: page layouts.
+- `resources/css/global.css`: global theme styles.
+
+## Development Guide
+
+To add a new tool page:
+
+1. Add a new FXML file under `src/main/resources/fxml/`.
+2. Add a Controller under `src/main/java/com/devtool/controller/` and extend `BaseController`.
+3. Put reusable logic under `src/main/java/com/devtool/util/` when needed.
+4. Register the page in `PageEnum`.
+
+Recommendations:
+
+- Reuse existing styles in `global.css`.
+- Run long tasks on background threads to avoid blocking the JavaFX UI thread.
+- Never commit API keys, tokens, or personal data.
+- Keep shared logic in `util` instead of overloading Controllers.
+
+## Contributing
+
+Issues, suggestions, and pull requests are welcome.
+
+Suggested workflow:
+
+1. Fork this repository.
+2. Create a focused feature branch.
+3. Keep unrelated formatting changes out of the PR.
+4. Run the build before submitting:
+
+```powershell
+mvn -q -DskipTests package
+```
+
+5. Describe what changed, how it was tested, and any potential impact.
+
+## Security
+
+- Do not commit API keys, tokens, cookies, or production credentials.
+- Rotate any key that has appeared in chat logs, screenshots, or Git history.
+- The AI assistant sends prompts to the configured model provider; review your provider's data policy.
+- Before publishing packaged builds, check `logs/`, `wordbook/`, and local config files to avoid leaking personal data.
+
+## Roadmap
+
+- Add more AI provider presets.
+- Add unit tests for core utility classes.
+- Add screenshots to the README.
+- Move release notes to a dedicated `CHANGELOG.md`.
+- Improve cross-platform packaging.
+
+## License
+
+This project is open-sourced under the [MIT License](LICENSE).
+
+## Contact
+
+- Author: Jactil
+- Email: `jactil777@gmail.com`
