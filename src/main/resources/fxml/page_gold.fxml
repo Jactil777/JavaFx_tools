@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.devtool.controller.GoldPageController"
+      styleClass="page-container"
+      style="-fx-padding: 20;">
+
+    <!-- 顶部标题栏 -->
+    <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 0 0 16 0;">
+        <Label text="💰" style="-fx-font-size: 22px;"/>
+        <Label text="金价看板" styleClass="title-label" style="-fx-font-size: 22px;"/>
+        <Label text="实时追踪全球黄金价格走势"
+               style="-fx-text-fill:#888; -fx-font-size:12px;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="refreshBtn" text="🔄 刷新" styleClass="gold-refresh-btn" onAction="#onRefresh"/>
+        <Button fx:id="autoRefreshBtn" text="⏱ 自动刷新" styleClass="gold-auto-btn" onAction="#onToggleAutoRefresh"/>
+    </HBox>
+
+    <!-- 三张金价卡片 -->
+    <HBox spacing="16" style="-fx-padding: 0 0 16 0;">
+        <!-- 现货黄金卡片 -->
+        <VBox styleClass="gold-card" HBox.hgrow="ALWAYS"
+              onMouseClicked="#onCardClick" userData="XAU">
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label text="🥇" style="-fx-font-size: 18px;"/>
+                <VBox>
+                    <Label fx:id="xauTitle" text="现货黄金 · 伦敦金" styleClass="gold-card-title"/>
+                    <Label fx:id="xauUnit" text="USD/盎司" styleClass="gold-card-unit"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="xauTrend" text="--" styleClass="gold-trend-badge"/>
+            </HBox>
+            <Label fx:id="xauPrice" text="--" styleClass="gold-price-label"/>
+            <HBox alignment="CENTER_LEFT" spacing="16">
+                <VBox>
+                    <Label text="涨跌额" styleClass="gold-detail-label"/>
+                    <Label fx:id="xauChange" text="--" styleClass="gold-change-label"/>
+                </VBox>
+                <VBox>
+                    <Label text="涨跌幅" styleClass="gold-detail-label"/>
+                    <Label fx:id="xauChangePct" text="--" styleClass="gold-change-pct-label"/>
+                </VBox>
+            </HBox>
+            <Label fx:id="xauTime" text="等待数据..." styleClass="gold-time-label"/>
+        </VBox>
+
+        <!-- COMEX黄金卡片 -->
+        <VBox styleClass="gold-card" HBox.hgrow="ALWAYS"
+              onMouseClicked="#onCardClick" userData="GC">
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label text="🏦" style="-fx-font-size: 18px;"/>
+                <VBox>
+                    <Label fx:id="gcTitle" text="COMEX黄金 · 纽约金" styleClass="gold-card-title"/>
+                    <Label fx:id="gcUnit" text="USD/盎司" styleClass="gold-card-unit"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="gcTrend" text="--" styleClass="gold-trend-badge"/>
+            </HBox>
+            <Label fx:id="gcPrice" text="--" styleClass="gold-price-label"/>
+            <HBox alignment="CENTER_LEFT" spacing="16">
+                <VBox>
+                    <Label text="涨跌额" styleClass="gold-detail-label"/>
+                    <Label fx:id="gcChange" text="--" styleClass="gold-change-label"/>
+                </VBox>
+                <VBox>
+                    <Label text="涨跌幅" styleClass="gold-detail-label"/>
+                    <Label fx:id="gcChangePct" text="--" styleClass="gold-change-pct-label"/>
+                </VBox>
+            </HBox>
+            <Label fx:id="gcTime" text="等待数据..." styleClass="gold-time-label"/>
+        </VBox>
+
+        <!-- 沪金卡片 -->
+        <VBox styleClass="gold-card" HBox.hgrow="ALWAYS"
+              onMouseClicked="#onCardClick" userData="AU0">
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label text="🇨🇳" style="-fx-font-size: 18px;"/>
+                <VBox>
+                    <Label fx:id="au0Title" text="沪金连续 · 上海金" styleClass="gold-card-title"/>
+                    <Label fx:id="au0Unit" text="元/克" styleClass="gold-card-unit"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="au0Trend" text="--" styleClass="gold-trend-badge"/>
+            </HBox>
+            <Label fx:id="au0Price" text="--" styleClass="gold-price-label"/>
+            <HBox alignment="CENTER_LEFT" spacing="16">
+                <VBox>
+                    <Label text="涨跌额" styleClass="gold-detail-label"/>
+                    <Label fx:id="au0Change" text="--" styleClass="gold-change-label"/>
+                </VBox>
+                <VBox>
+                    <Label text="涨跌幅" styleClass="gold-detail-label"/>
+                    <Label fx:id="au0ChangePct" text="--" styleClass="gold-change-pct-label"/>
+                </VBox>
+            </HBox>
+            <Label fx:id="au0Time" text="等待数据..." styleClass="gold-time-label"/>
+        </VBox>
+    </HBox>
+
+    <!-- 走势图区域 -->
+    <VBox styleClass="gold-chart-container" VBox.vgrow="ALWAYS">
+        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 12 16 8 16;">
+            <Label text="📈" style="-fx-font-size: 14px;"/>
+            <Label text="实时走势图" styleClass="gold-chart-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="chartSymbolLabel" text="现货黄金 (XAU)" styleClass="gold-chart-symbol"/>
+        </HBox>
+        <StackPane style="-fx-padding: 0 16 16 16;" VBox.vgrow="ALWAYS">
+            <WebView fx:id="chartWebView"/>
+            <Label fx:id="chartLoadingLabel" text="正在加载图表..."
+                   style="-fx-text-fill:#666; -fx-font-size:14px;"/>
+        </StackPane>
+    </VBox>
+
+    <!-- 底部数据详情 -->
+    <HBox spacing="16" style="-fx-padding: 0 0 8 0;">
+        <VBox styleClass="gold-detail-card" HBox.hgrow="ALWAYS">
+            <Label text="开盘价" styleClass="gold-detail-header"/>
+            <Label fx:id="xauOpen" text="--" styleClass="gold-detail-value"/>
+        </VBox>
+        <VBox styleClass="gold-detail-card" HBox.hgrow="ALWAYS">
+            <Label text="最高价" styleClass="gold-detail-header"/>
+            <Label fx:id="xauHigh" text="--" styleClass="gold-detail-value"/>
+        </VBox>
+        <VBox styleClass="gold-detail-card" HBox.hgrow="ALWAYS">
+            <Label text="最低价" styleClass="gold-detail-header"/>
+            <Label fx:id="xauLow" text="--" styleClass="gold-detail-value"/>
+        </VBox>
+        <VBox styleClass="gold-detail-card" HBox.hgrow="ALWAYS">
+            <Label text="昨收价" styleClass="gold-detail-header"/>
+            <Label fx:id="xauPrevClose" text="--" styleClass="gold-detail-value"/>
+        </VBox>
+        <VBox styleClass="gold-detail-card" HBox.hgrow="ALWAYS">
+            <Label text="数据更新" styleClass="gold-detail-header"/>
+            <Label fx:id="lastUpdateTime" text="--" styleClass="gold-detail-value"/>
+        </VBox>
+    </HBox>
+
+    <!-- 底部提示 -->
+    <Label text="数据来源：新浪财经 · 点击卡片切换走势图品种 · 仅供参考，不构成投资建议"
+           style="-fx-text-fill:#555; -fx-font-size:11px; -fx-padding: 4 0 0 0;"/>
+</VBox>

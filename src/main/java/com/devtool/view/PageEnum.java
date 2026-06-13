@@ -24,7 +24,8 @@ public enum PageEnum {
     SQL_TOOL       ("\uD83D\uDDC4", "SQL工具",    "#98c379", "/fxml/page_sql.fxml"),
     TEXT_TOOL      ("\uD83D\uDCDD", "文本处理",   "#e06c75", "/fxml/page_text.fxml"),
     GIT_REPORT     ("\uD83D\uDCCA", "开发日报",   "#61afef", "/fxml/page_git_report.fxml"),
-    FISH_TOOL      ("\uD83D\uDD27", "调试工具",   "#c678dd", "/fxml/page_fish.fxml");
+    FISH_TOOL      ("\uD83D\uDD27", "调试工具",   "#c678dd", "/fxml/page_fish.fxml"),
+    GOLD_TOOL      ("\uD83D\uDCB0", "金价看板",   "#ffd700", "/fxml/page_gold.fxml");
 
     // ========== 后续在这里追加业务页面（取消注释即可） ==========
 

@@ -10,6 +10,8 @@ package com.devtool;
  */
 public class Launcher {
     public static void main(String[] args) {
+        // 禁用 D3D 硬件加速，避免 WebView 渲染崩溃
+        System.setProperty("prism.order", "sw");
         Main.main(args);
     }
 }
