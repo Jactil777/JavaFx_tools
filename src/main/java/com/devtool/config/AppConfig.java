@@ -10,7 +10,8 @@ public class AppConfig {
     // 应用基础信息
     public static final String APP_NAME    = "DevToolBox 开发者工具箱";
     public static final String APP_VERSION = "1.0.10";
-    public static final String APP_AUTHOR  = "DevToolBox";
+    public static final String APP_AUTHOR  = "Jactil";
+    public static final String APP_CONTACT = "jactil777@gmail.com";
 
     // 主窗口尺寸
     public static final int WINDOW_WIDTH      = 1000;

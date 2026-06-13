@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.devtool.controller.AiAssistantPageController"
+      styleClass="ai-root"
+      spacing="0">
+
+    <!-- 顶部工具栏 -->
+    <HBox alignment="CENTER_LEFT" spacing="12" styleClass="ai-topbar">
+        <Label text="AI" styleClass="ai-logo"/>
+        <VBox spacing="1">
+            <Label text="AI助手" styleClass="ai-title"/>
+            <Label text="多轮对话 · 本地历史 · OpenAI-compatible" styleClass="ai-subtitle"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="复制回复" onAction="#onCopyLastReply" styleClass="ai-ghost-btn"/>
+        <Button text="清空当前" onAction="#onClearCurrentConversation" styleClass="ai-ghost-btn"/>
+        <Button text="保存配置" onAction="#onSaveConfig" styleClass="ai-ghost-btn"/>
+    </HBox>
+
+    <SplitPane dividerPositions="0.22" VBox.vgrow="ALWAYS" styleClass="ai-main-split">
+
+        <!-- 左侧：最近对话 -->
+        <VBox spacing="10" styleClass="ai-sidebar">
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label text="最近对话" styleClass="ai-section-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="+ 新对话" onAction="#onNewConversation" styleClass="ai-primary-mini-btn"/>
+            </HBox>
+
+            <ListView fx:id="conversationList" VBox.vgrow="ALWAYS" styleClass="ai-conversation-list"/>
+
+            <Button text="删除当前会话" onAction="#onDeleteConversation" maxWidth="Infinity" styleClass="ai-danger-btn"/>
+
+            <TitledPane text="模型设置" expanded="false" styleClass="ai-settings-pane">
+                <VBox spacing="8" style="-fx-padding:10 0 0 0;">
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label text="当前推荐：火山方舟" styleClass="ai-provider-label"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="应用方舟预设" onAction="#onApplyArkPreset" styleClass="ai-primary-mini-btn"/>
+                    </HBox>
+
+                    <VBox spacing="4">
+                        <Label text="API Endpoint" styleClass="ai-field-label"/>
+                        <TextField fx:id="endpointField" promptText="https://api.openai.com/v1/chat/completions"/>
+                    </VBox>
+
+                    <VBox spacing="4">
+                        <Label text="Model / Endpoint ID" styleClass="ai-field-label"/>
+                        <ComboBox fx:id="modelCombo" editable="true" maxWidth="Infinity"
+                                  promptText="选择或输入模型 ID"/>
+                    </VBox>
+
+                    <VBox spacing="4">
+                        <Label text="API Key" styleClass="ai-field-label"/>
+                        <PasswordField fx:id="apiKeyField" promptText="sk-..."/>
+                    </VBox>
+
+                    <VBox spacing="4">
+                        <Label text="System Prompt" styleClass="ai-field-label"/>
+                        <TextArea fx:id="systemPromptArea" prefRowCount="5" wrapText="true"
+                                  styleClass="json-text-area"
+                                  promptText="设置 AI 的回答风格和任务边界..."/>
+                    </VBox>
+
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Temperature" styleClass="ai-field-label"/>
+                        <Slider fx:id="temperatureSlider" min="0" max="2" value="0.7" blockIncrement="0.1"
+                                HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="temperatureLabel" text="0.7" styleClass="ai-number-label"/>
+                    </HBox>
+
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Max Tokens" styleClass="ai-field-label"/>
+                        <Spinner fx:id="maxTokensSpinner" editable="true" prefWidth="105"/>
+                    </HBox>
+
+                    <Label text="方舟返回 ModelNotOpen 时，请先在控制台开通该模型，或将这里改成你已开通的模型/接入点 ID。配置保存到用户目录，不写入项目源码。"
+                           wrapText="true" styleClass="ai-help-label"/>
+                </VBox>
+            </TitledPane>
+        </VBox>
+
+        <!-- 右侧：完整会话 -->
+        <VBox spacing="0" styleClass="ai-chat-pane">
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="ai-chat-header">
+                <VBox spacing="2">
+                    <Label fx:id="currentTitleLabel" text="新对话" styleClass="ai-chat-title"/>
+                    <Label fx:id="currentMetaLabel" text="0 条消息" styleClass="ai-chat-meta"/>
+                    <Label fx:id="currentModelLabel" text="Doubao-Seed-2.0-mini · doubao-seed-2-0-mini-260428"
+                           styleClass="ai-chat-model"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="最近 8 轮上下文参与请求" styleClass="ai-context-chip"/>
+            </HBox>
+
+            <ListView fx:id="messageList" VBox.vgrow="ALWAYS" styleClass="ai-message-list"/>
+
+            <VBox spacing="8" styleClass="ai-composer">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="输入" styleClass="ai-section-title"/>
+                    <Label text="Ctrl+Enter 发送" styleClass="ai-help-label"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="粘贴" onAction="#onPasteInput" styleClass="ai-ghost-btn"/>
+                    <Button text="清空" onAction="#onClearInput" styleClass="ai-ghost-btn"/>
+                </HBox>
+
+                <TextArea fx:id="inputArea" prefRowCount="4" wrapText="true"
+                          styleClass="ai-input-area"
+                          promptText="输入问题，或粘贴代码 / 日志让 AI 分析..."/>
+
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label fx:id="statusLabel" text="就绪" styleClass="ai-status-label"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="btnSend" text="发送" onAction="#onSend" styleClass="ai-send-btn"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </SplitPane>
+</VBox>

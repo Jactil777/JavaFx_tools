@@ -9,34 +9,51 @@ import com.devtool.config.AppConfig;
 public enum PageEnum {
 
     // 默认首页
-    EMPTY("🏠 首页", AppConfig.FXML_EMPTY_PAGE),
+    EMPTY("\uD83C\uDFE0", "首页", "#4a6fa5", AppConfig.FXML_EMPTY_PAGE),
 
     // ========== 业务页面 ==========
-    JSON_TOOL    ("📋 JSON工具",     "/fxml/page_json.fxml"),
-    PASSWORD_TOOL("🔑 随机密码",     "/fxml/page_password.fxml"),
-    QRCODE_TOOL  ("📷 二维码",       "/fxml/page_qrcode.fxml"),
-    CRON_TOOL    ("⏰ Cron表达式",   "/fxml/page_cron.fxml"),
-    ENCRYPT_TOOL ("🔐 加密解密",    "/fxml/page_encrypt.fxml"),
-    TIME_TOOL    ("⏱ 时间戳工具",  "/fxml/page_time.fxml"),
-    CALCULATOR_TOOL("⏱ 计算器",    "/fxml/page_calculator.fxml"),
-    TRANSLATE_TOOL ("📚 翻译助手",    "/fxml/page_translate.fxml"),
-    SQL_TOOL     ("🗄 SQL工具",     "/fxml/page_sql.fxml"),
-    TEXT_TOOL    ("📝 文本处理",    "/fxml/page_text.fxml"),
-    GIT_REPORT   ("📊 开发日报",    "/fxml/page_git_report.fxml"),
-    FISH_TOOL    ("🔧 调试工具",    "/fxml/page_fish.fxml");
+    JSON_TOOL      ("\uD83D\uDCCB", "JSON工具",   "#e5c07b", "/fxml/page_json.fxml"),
+    PASSWORD_TOOL  ("\uD83D\uDD11", "随机密码",   "#98c379", "/fxml/page_password.fxml"),
+    QRCODE_TOOL    ("\uD83D\uDCF7", "二维码",     "#61afef", "/fxml/page_qrcode.fxml"),
+    CRON_TOOL      ("⏰", "Cron表达式", "#c678dd", "/fxml/page_cron.fxml"),
+    ENCRYPT_TOOL   ("\uD83D\uDD10", "加密解密",   "#be5046", "/fxml/page_encrypt.fxml"),
+    TIME_TOOL      ("⏱", "时间戳工具", "#56b6c2", "/fxml/page_time.fxml"),
+    CALCULATOR_TOOL("\uD83E\uDDEE", "计算器",     "#d19a66", "/fxml/page_calculator.fxml"),
+    AI_ASSISTANT   ("\uD83E\uDD16", "AI助手",     "#56b6c2", "/fxml/page_ai_assistant.fxml"),
+    TRANSLATE_TOOL ("\uD83D\uDCDA", "翻译助手",   "#4a6fa5", "/fxml/page_translate.fxml"),
+    SQL_TOOL       ("\uD83D\uDDC4", "SQL工具",    "#98c379", "/fxml/page_sql.fxml"),
+    TEXT_TOOL      ("\uD83D\uDCDD", "文本处理",   "#e06c75", "/fxml/page_text.fxml"),
+    GIT_REPORT     ("\uD83D\uDCCA", "开发日报",   "#61afef", "/fxml/page_git_report.fxml"),
+    FISH_TOOL      ("\uD83D\uDD27", "调试工具",   "#c678dd", "/fxml/page_fish.fxml");
 
     // ========== 后续在这里追加业务页面（取消注释即可） ==========
 
-    private final String pageName;
+    private final String icon;
+    private final String displayName;
+    private final String iconColor;
     private final String fxmlPath;
 
-    PageEnum(String pageName, String fxmlPath) {
-        this.pageName = pageName;
+    PageEnum(String icon, String displayName, String iconColor, String fxmlPath) {
+        this.icon = icon;
+        this.displayName = displayName;
+        this.iconColor = iconColor;
         this.fxmlPath = fxmlPath;
     }
 
     public String getPageName() {
-        return pageName;
+        return icon + " " + displayName;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public String getIconColor() {
+        return iconColor;
     }
 
     public String getFxmlPath() {

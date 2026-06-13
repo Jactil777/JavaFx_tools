@@ -64,7 +64,7 @@
     -fx-text-fill: #ffffff;
 }
 
-.nav-list .list-cell:hover:!selected {
+.nav-list .list-cell:hover {
     -fx-background-color: #44474a;
     -fx-text-fill: #dddddd;
 }
@@ -367,7 +367,7 @@
     -fx-text-fill: #ffffff;
 }
 
-.json-tree-view .tree-cell:hover:!selected {
+.json-tree-view .tree-cell:hover {
     -fx-background-color: #353535;
 }
 
@@ -503,7 +503,7 @@
     -fx-text-fill: #ffffff;
 }
 
-.list-view .list-cell:hover:!selected {
+.list-view .list-cell:hover {
     -fx-background-color: #2a2d2f;
 }
 
@@ -668,7 +668,7 @@
     -fx-text-fill: #ffffff;
 }
 
-.wordbook-list .list-cell:hover:!selected {
+.wordbook-list .list-cell:hover {
     -fx-background-color: #2a2d2f;
 }
 
@@ -722,4 +722,263 @@
 
 .word-card-meaning-flow Text {
     -fx-font-size: 13px;
+}
+
+/* =====================================================
+   AI 助手样式
+   ===================================================== */
+
+.ai-root {
+    -fx-background-color: #202124;
+    -fx-padding: 0;
+}
+
+.ai-topbar {
+    -fx-background-color: #2b2d30;
+    -fx-border-color: #3a3d40;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 14 18;
+}
+
+.ai-logo {
+    -fx-background-color: #4a6fa5;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 9;
+    -fx-background-radius: 7;
+}
+
+.ai-title {
+    -fx-text-fill: #f0f3f6;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.ai-subtitle,
+.ai-chat-meta,
+.ai-help-label {
+    -fx-text-fill: #747b84;
+    -fx-font-size: 11px;
+}
+
+.ai-chat-model {
+    -fx-text-fill: #8cb4ff;
+    -fx-font-size: 11px;
+}
+
+.ai-main-split,
+.ai-main-split > .split-pane-divider {
+    -fx-background-color: #202124;
+}
+
+.ai-main-split > .split-pane-divider {
+    -fx-padding: 0 1;
+}
+
+.ai-sidebar {
+    -fx-background-color: #25272a;
+    -fx-border-color: #373b40;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 14;
+    -fx-min-width: 230px;
+    -fx-pref-width: 280px;
+}
+
+.ai-section-title,
+.ai-field-label {
+    -fx-text-fill: #9aa3ad;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.ai-provider-label {
+    -fx-background-color: #263341;
+    -fx-text-fill: #8cb4ff;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 9;
+    -fx-background-radius: 12;
+}
+
+.ai-sidebar .combo-box {
+    -fx-background-color: #1e1f22;
+    -fx-border-color: #4b5057;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
+}
+
+.ai-sidebar .combo-box .text-field {
+    -fx-background-color: #1e1f22;
+    -fx-text-fill: #d4d4d4;
+    -fx-border-color: transparent;
+}
+
+.ai-conversation-list {
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 2 0;
+}
+
+.ai-conversation-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #d4d4d4;
+    -fx-padding: 4 0;
+}
+
+.ai-conversation-list .list-cell:selected {
+    -fx-background-color: transparent;
+}
+
+.ai-message-list {
+    -fx-background-color: #202124;
+    -fx-control-inner-background: #202124;
+    -fx-border-color: transparent;
+    -fx-padding: 8 0;
+}
+
+.ai-message-list .list-cell,
+.ai-message-list .list-cell:even,
+.ai-message-list .list-cell:odd,
+.ai-message-list .list-cell:selected {
+    -fx-background-color: transparent;
+}
+
+.ai-chat-pane {
+    -fx-background-color: #202124;
+}
+
+.ai-chat-header {
+    -fx-background-color: #25272a;
+    -fx-border-color: #373b40;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 12 16;
+}
+
+.ai-chat-title {
+    -fx-text-fill: #f0f3f6;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.ai-context-chip {
+    -fx-background-color: #263341;
+    -fx-text-fill: #8cb4ff;
+    -fx-font-size: 11px;
+    -fx-padding: 4 10;
+    -fx-background-radius: 12;
+}
+
+.ai-composer {
+    -fx-background-color: #25272a;
+    -fx-border-color: #373b40;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 12 16 14 16;
+}
+
+.ai-input-area {
+    -fx-background-color: #1e1f22;
+    -fx-text-fill: #e8eaed;
+    -fx-border-color: #4b5057;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 13px;
+    -fx-padding: 9;
+}
+
+.ai-input-area .content {
+    -fx-background-color: #1e1f22;
+}
+
+.ai-input-area:focused {
+    -fx-border-color: #4a6fa5;
+}
+
+.ai-send-btn {
+    -fx-background-color: #4a6fa5;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #5a7fb5;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8 34;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.ai-send-btn:hover {
+    -fx-background-color: #5a7fb5;
+}
+
+.ai-primary-mini-btn {
+    -fx-background-color: #4a6fa5;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #5a7fb5;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
+    -fx-padding: 5 11;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+
+.ai-ghost-btn {
+    -fx-background-color: #33363a;
+    -fx-text-fill: #c7ccd1;
+    -fx-border-color: #4b5057;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
+    -fx-padding: 5 12;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+
+.ai-ghost-btn:hover,
+.ai-primary-mini-btn:hover {
+    -fx-background-color: #40454b;
+    -fx-text-fill: #ffffff;
+}
+
+.ai-danger-btn {
+    -fx-background-color: #332b2b;
+    -fx-text-fill: #d89090;
+    -fx-border-color: #5b3b3b;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
+    -fx-padding: 6 12;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+
+.ai-danger-btn:hover {
+    -fx-background-color: #443030;
+}
+
+.ai-settings-pane {
+    -fx-background-color: transparent;
+    -fx-text-fill: #c7ccd1;
+}
+
+.ai-settings-pane > .title {
+    -fx-background-color: #2d3034;
+    -fx-border-color: #42464d;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8 10;
+}
+
+.ai-settings-pane > *.content {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.ai-number-label {
+    -fx-text-fill: #8cb4ff;
+    -fx-font-family: "Consolas", monospace;
+    -fx-min-width: 28;
+}
+
+.ai-status-label {
+    -fx-text-fill: #858b93;
+    -fx-font-size: 12px;
 }

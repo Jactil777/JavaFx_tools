@@ -1,12 +1,16 @@
 package com.devtool.controller;
 
 import com.devtool.view.PageEnum;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,9 +53,38 @@ public class MainController {
      */
     private void initNavList() {
         navListView.getItems().clear();
-        for (PageEnum page : PageEnum.values()) {
+        PageEnum[] pages = PageEnum.values();
+        for (PageEnum page : pages) {
             navListView.getItems().add(page.getPageName());
         }
+        navListView.setCellFactory(listView -> new ListCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null || getIndex() < 0 || getIndex() >= pages.length) {
+                    setText(null);
+                    setGraphic(null);
+                    return;
+                }
+
+                PageEnum page = pages[getIndex()];
+                Label iconLabel = new Label(page.getIcon());
+                iconLabel.setMinWidth(20);
+                iconLabel.setStyle("-fx-text-fill:" + page.getIconColor() + "; -fx-font-size:15px; -fx-font-weight:bold;");
+
+                Label textLabel = new Label(page.getDisplayName());
+                textLabel.textFillProperty().bind(Bindings.when(selectedProperty())
+                        .then(Color.WHITE)
+                        .otherwise(Color.web("#bbbbbb")));
+                textLabel.setStyle("-fx-font-size:13px;");
+
+                HBox row = new HBox(7, iconLabel, textLabel);
+                row.setStyle("-fx-alignment:center-left;");
+
+                setText(null);
+                setGraphic(row);
+            }
+        });
         navListView.getSelectionModel().select(0);
     }
 
